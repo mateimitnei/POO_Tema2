@@ -74,6 +74,7 @@ public final class Main {
 
         ArrayNode output = objectMapper.createArrayNode();
 
+
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
     }
