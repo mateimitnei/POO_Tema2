@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.checker.Checker;
 import org.poo.checker.CheckerConstants;
 import org.poo.fileio.ObjectInput;
+import org.poo.system.Engine;
+import org.poo.system.Output;
+import org.poo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,11 +75,17 @@ public final class Main {
         File file = new File(CheckerConstants.TESTS_PATH + filePath1);
         ObjectInput inputData = objectMapper.readValue(file, ObjectInput.class);
 
-        ArrayNode output = objectMapper.createArrayNode();
+        Output finalOutput = Output.getInstance();
+        finalOutput.setOutput(objectMapper.createArrayNode());
 
+        Engine bankEngine = Engine.getInstance();
+        bankEngine.init(inputData);
+        bankEngine.execute();
 
-        ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-        objectWriter.writeValue(new File(filePath2), output);
+        Utils.resetRandom();
+
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filePath2),
+                finalOutput.getOutput());
     }
 
     /**
