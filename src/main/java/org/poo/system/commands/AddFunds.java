@@ -11,10 +11,12 @@ public final class AddFunds implements Strategy {
         Engine engine = Engine.getInstance();
 
         for (User user : engine.getUsers()) {
-            for (BankAccount account : user.getAccounts()) {
-                if (account.getIban().equals(input.getAccount())) {
-                    account.deposit(input.getAmount());
-                    return;
+            if (user.getEmail().equals(input.getEmail())) {
+                for (BankAccount account : user.getAccounts()) {
+                    if (account.getIban().equals(input.getAccount())) {
+                        account.deposit(input.getAmount());
+                        return;
+                    }
                 }
             }
         }

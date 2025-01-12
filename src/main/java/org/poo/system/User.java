@@ -7,8 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.poo.fileio.UserInput;
 import org.poo.system.accounts.BankAccount;
-import org.poo.system.transactions.Transaction;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public final class User {
     private final String firstName;
     private final String lastName;
     private final String email;
-    private final String birthDate;
+    private final LocalDate birthDate;
     private final String occupation;
     @Setter
     private String plan;
@@ -27,7 +28,8 @@ public final class User {
         firstName = userInput.getFirstName();
         lastName = userInput.getLastName();
         email = userInput.getEmail();
-        birthDate = userInput.getBirthDate();
+        birthDate = LocalDate.parse(userInput.getBirthDate(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         occupation = userInput.getOccupation();
         plan = "";
         accounts = new ArrayList<>();

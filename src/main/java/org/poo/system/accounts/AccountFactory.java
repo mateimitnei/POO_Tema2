@@ -16,6 +16,7 @@ public final class AccountFactory {
         return switch (input.getAccountType()) {
             case "classic" -> new ClassicAccount(input.getCurrency());
             case "savings" -> new SavingsAccount(input.getCurrency(), input.getInterestRate());
+            case "business" -> new BusinessAccount(input.getCurrency());
             default -> throw new IllegalArgumentException("Invalid account type.");
         };
     }

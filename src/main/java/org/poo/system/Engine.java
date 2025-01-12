@@ -45,6 +45,7 @@ public final class Engine {
     public void init(final ObjectInput fileInput) {
         this.input = fileInput;
         users = new ArrayList<>();
+        commerciants = new ArrayList<>();
         objectMapper = new ObjectMapper();
 
         for (UserInput userInput : fileInput.getUsers()) {
