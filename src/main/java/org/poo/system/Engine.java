@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 
 import org.poo.fileio.CommandInput;
+import org.poo.fileio.CommerciantInput;
 import org.poo.fileio.ObjectInput;
 import org.poo.fileio.UserInput;
 import org.poo.system.commands.*;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public final class Engine {
     private ObjectInput input;
     private ArrayList<User> users;
+    private ArrayList<Commerciant> commerciants;
     private ObjectMapper objectMapper;
     private static Engine instance;
 
@@ -46,8 +48,10 @@ public final class Engine {
         objectMapper = new ObjectMapper();
 
         for (UserInput userInput : fileInput.getUsers()) {
-            users.add(new User(userInput.getFirstName(), userInput.getLastName(),
-                    userInput.getEmail()));
+            users.add(new User(userInput));
+        }
+        for (CommerciantInput commerciantInput : fileInput.getCommerciants()) {
+            commerciants.add(new Commerciant(commerciantInput));
         }
     }
 
@@ -76,6 +80,7 @@ public final class Engine {
                 case "splitPayment" -> handler.setStrategy(new SplitPayment());
                 case "report" -> handler.setStrategy(new Report());
                 case "spendingsReport" -> handler.setStrategy(new SpendingsReport());
+                case "withdrawSavings" -> handler.setStrategy(new WithdrawSavings());
                 default -> { }
             }
 

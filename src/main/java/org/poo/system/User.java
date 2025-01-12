@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
+import lombok.Setter;
+import org.poo.fileio.UserInput;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.transactions.Transaction;
 
@@ -15,12 +17,19 @@ public final class User {
     private final String firstName;
     private final String lastName;
     private final String email;
+    private final String birthDate;
+    private final String occupation;
+    @Setter
+    private String plan;
     private List<BankAccount> accounts;
 
-    public User(final String firstName, final String lastName, final String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+    public User(final UserInput userInput) {
+        firstName = userInput.getFirstName();
+        lastName = userInput.getLastName();
+        email = userInput.getEmail();
+        birthDate = userInput.getBirthDate();
+        occupation = userInput.getOccupation();
+        plan = "";
         accounts = new ArrayList<>();
     }
 
