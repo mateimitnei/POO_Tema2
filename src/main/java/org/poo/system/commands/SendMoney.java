@@ -40,7 +40,7 @@ public final class SendMoney implements Strategy {
                 return;
             }
 
-            senderAccount.withdraw(input.getAmount());
+            senderAccount.withdraw(input.getAmount(), exchangeRates);
             senderAccount.addTransaction(TransactionFactory.createTransaction(input, Map.of(
                     "currency", senderAccount.getCurrency(),
                     "type", "sent",
@@ -57,7 +57,7 @@ public final class SendMoney implements Strategy {
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
             senderAccount.addTransaction(new Transaction(input.getTimestamp(), "Insufficient funds"));
         } catch (NullPointerException e) {
-            // If the account was not found
+            // If the account was not found, do nothing
         }
     }
 }

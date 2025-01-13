@@ -39,7 +39,7 @@ public final class WithdrawSavings implements Strategy {
                                     return;
                                 }
                                 try {
-                                    account.withdraw(convertedAmount);
+                                    account.withdraw(convertedAmount, exchangeRates);
                                     receiver.deposit(input.getAmount());
                                     account.addTransaction(new Transaction(input.getTimestamp(),
                                             "Savings withdrawal"));

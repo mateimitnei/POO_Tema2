@@ -38,7 +38,7 @@ public final class PayOnline implements Strategy {
                                 // error
                                 return;
                             }
-                            account.withdraw(convertedAmount);
+                            account.withdraw(convertedAmount, exchangeRates);
 
                             account.addTransaction(TransactionFactory.createTransaction(input, Map.of(
                                     "amount", String.valueOf(convertedAmount),
