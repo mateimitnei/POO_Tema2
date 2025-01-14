@@ -1,6 +1,5 @@
 package org.poo.system.cards;
 
-import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
 
 public final class StandardCard extends Card {

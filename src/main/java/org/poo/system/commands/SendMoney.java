@@ -55,7 +55,8 @@ public final class SendMoney implements Strategy {
             )));
 
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
-            senderAccount.addTransaction(new Transaction(input.getTimestamp(), "Insufficient funds"));
+            senderAccount.addTransaction(new Transaction(input.getTimestamp(),
+                    "Insufficient funds"));
         } catch (NullPointerException e) {
             // If the account was not found, do nothing
         }

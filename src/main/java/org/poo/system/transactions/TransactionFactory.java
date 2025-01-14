@@ -15,7 +15,8 @@ public final class TransactionFactory {
      * @param params the mapped extra parameters for the transaction
      * @return the new transaction
      */
-    public static Transaction createTransaction(final CommandInput input, final Map<String, String> params) {
+    public static Transaction createTransaction(final CommandInput input,
+                                                final Map<String, String> params) {
         return switch (input.getCommand()) {
             case "sendMoney" -> new BankTransfer(input.getTimestamp(), input.getDescription(),
                     input.getAccount(), input.getReceiver(),

@@ -9,7 +9,7 @@ public class Commerciant {
     private final String type;
     private final String cashbackStrategy;
 
-    public Commerciant(CommerciantInput input) {
+    public Commerciant(final CommerciantInput input) {
         this.commerciant = input.getCommerciant();
         this.id = input.getId();
         this.account = input.getAccount();

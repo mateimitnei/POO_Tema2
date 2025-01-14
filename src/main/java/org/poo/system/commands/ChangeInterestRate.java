@@ -7,7 +7,6 @@ import org.poo.system.Output;
 import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.accounts.SavingsAccount;
-import org.poo.system.transactions.Transaction;
 import org.poo.system.transactions.TransactionFactory;
 
 public final class ChangeInterestRate implements Strategy {

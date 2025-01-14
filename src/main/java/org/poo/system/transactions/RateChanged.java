@@ -3,7 +3,7 @@ package org.poo.system.transactions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class RateChanged extends Transaction {
+public final class RateChanged extends Transaction {
 
     public RateChanged(final int timestamp, final double rate) {
         super(timestamp, "Interest rate of the account changed to " + rate);

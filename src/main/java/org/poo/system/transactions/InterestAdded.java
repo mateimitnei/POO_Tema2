@@ -3,7 +3,7 @@ package org.poo.system.transactions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class InterestAdded extends Transaction {
+public final class InterestAdded extends Transaction {
 
     public InterestAdded(final int timestamp) {
         super(timestamp, "Interest added");

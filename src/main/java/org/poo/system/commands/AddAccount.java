@@ -16,7 +16,8 @@ public final class AddAccount implements Strategy {
             if (user.getEmail().equals(input.getEmail())) {
                 BankAccount account = AccountFactory.createAccount(input, user);
                 user.addAccount(account);
-                account.addTransaction(new Transaction(input.getTimestamp(), "New account created"));
+                account.addTransaction(new Transaction(input.getTimestamp(),
+                        "New account created"));
 
                 if (user.getPlan().isEmpty()) {
                     if (user.getOccupation().equals("student")) {

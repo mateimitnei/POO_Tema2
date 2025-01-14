@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.Getter;
 import lombok.Setter;
 import org.poo.system.ExchangeCurrency;
-import org.poo.system.ExchangeRate;
 import org.poo.system.User;
 import org.poo.system.cards.Card;
 import org.poo.system.transactions.Transaction;
@@ -26,6 +25,9 @@ public abstract class BankAccount {
     private static final int THRESHOLD = 30;
     private List<Transaction> transactions;
     private User owner;
+    private static final double STANDARD_FEE = 0.02;
+    private static final double SILVER_FEE = 0.01;
+    private static final double SILVER_THRESHOLD = 500.0;
 
     public BankAccount(final String currency, final User owner) {
         this.iban = Utils.generateIBAN();
@@ -71,14 +73,14 @@ public abstract class BankAccount {
         }
     }
 
-    public double applyFee(double amount, final ExchangeCurrency exchange) {
+    private double applyFee(double amount, final ExchangeCurrency exchange) {
         if (owner.getPlan().equals("standard")) {
-            amount += 0.02 * amount;
+            amount += STANDARD_FEE * amount;
             return amount;
         }
         double converted = exchange.exchange(currency, "RON", amount, new ArrayList<>());
-        if (owner.getPlan().equals("silver") && converted > 500.0) {
-            amount += 0.01 * amount;
+        if (owner.getPlan().equals("silver") && converted > SILVER_THRESHOLD) {
+            amount += SILVER_FEE * amount;
         }
         return amount;
     }
@@ -96,6 +98,7 @@ public abstract class BankAccount {
                 }
             }
             return "frozen";
+
         } else if (balance - minBalance <= THRESHOLD) {
             return "warning";
         }

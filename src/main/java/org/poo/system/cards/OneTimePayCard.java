@@ -1,6 +1,5 @@
 package org.poo.system.cards;
 
-import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.transactions.CardCreated;
 import org.poo.system.transactions.CardDeleted;

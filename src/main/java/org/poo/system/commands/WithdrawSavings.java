@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public final class WithdrawSavings implements Strategy {
+    private static final int MINIMUM_AGE = 21;
+
     @Override
     public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
@@ -21,7 +23,7 @@ public final class WithdrawSavings implements Strategy {
                 if (account.getIban().equals(input.getAccount())) {
 
                     if (account.getAccountType().equals("savings")) {
-                        if (user.getBirthDate().isAfter(LocalDate.now().minusYears(21))) {
+                        if (user.getBirthDate().isAfter(LocalDate.now().minusYears(MINIMUM_AGE))) {
                             account.addTransaction(new Transaction(input.getTimestamp(),
                                     "You don't have the minimum age required."));
                             return;
