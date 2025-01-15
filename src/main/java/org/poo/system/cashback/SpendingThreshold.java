@@ -9,6 +9,10 @@ import java.util.Map;
 
 public final class SpendingThreshold implements CashBackStrategy {
 
+    private static final double FIRST_RATE_THRESHOLD = 100.0;
+    private static final double SECOND_RATE_THRESHOLD = 300.0;
+    private static final double THIRD_RATE_THRESHOLD = 500.0;
+
     private static final Map<String, Double> firstRate = Map.of(
         "standard", 0.001,
         "student", 0.001,
@@ -38,14 +42,14 @@ public final class SpendingThreshold implements CashBackStrategy {
             return 0.0;
         }
 
-        double total = account.getTotalSpent() + amountInLei;
-        if (total >= 500.0) {
+        double total = account.getTotalSpent().getOrDefault(commerciant, 0.0) + amountInLei;
+        if (total >= THIRD_RATE_THRESHOLD) {
             return thirdRate.get(account.getOwner().getPlan());
 
-        } else if (total >= 300.0) {
+        } else if (total >= SECOND_RATE_THRESHOLD) {
             return secondRate.get(account.getOwner().getPlan());
 
-        } else if (total >= 100.0) {
+        } else if (total >= FIRST_RATE_THRESHOLD) {
             return firstRate.get(account.getOwner().getPlan());
         }
 

@@ -40,7 +40,7 @@ public final class SendMoney implements Strategy {
                 return;
             }
 
-            senderAccount.withdraw(input.getAmount());
+            senderAccount.withdraw(input.getAmount(), true);
             senderAccount.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
                     "currency", senderAccount.getCurrency(),
                     "type", "sent",

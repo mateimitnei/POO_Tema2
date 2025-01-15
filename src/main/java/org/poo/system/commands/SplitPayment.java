@@ -54,7 +54,7 @@ public final class SplitPayment implements Strategy {
                             return;
                         }
 
-                        account.withdraw(convertedAmount);
+                        account.withdraw(convertedAmount, true);
                         account.addToTransactionLog(TransactionFactory.createTransaction(input,
                                 Map.of("errorIBAN", "")));
                     }

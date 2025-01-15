@@ -22,7 +22,9 @@ public final class User {
     private final String occupation;
     @Setter
     private String plan;
-    private List<BankAccount> accounts;
+    private final List<BankAccount> accounts;
+    @Setter
+    private int paymentCounter;
 
     public User(final UserInput userInput) {
         firstName = userInput.getFirstName();
@@ -33,6 +35,7 @@ public final class User {
         occupation = userInput.getOccupation();
         plan = "";
         accounts = new ArrayList<>();
+        paymentCounter = 0;
     }
 
     public void addAccount(final BankAccount account) {

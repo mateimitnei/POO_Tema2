@@ -22,15 +22,8 @@ public final class PayOnline implements Strategy {
 
         if (commerciant == null) {
             // If the commerciant was not found
-            ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
-            ObjectNode output = engine.getObjectMapper().createObjectNode();
-
-            output.put("timestamp", input.getTimestamp());
-            output.put("description", "Commerciant not found");
-
-            commandOutput.put("command", input.getCommand());
-            commandOutput.set("output", output);
-            commandOutput.put("timestamp", input.getTimestamp());
+            ObjectNode commandOutput = TheNotFoundError
+                    .makeOutput(input, engine.getObjectMapper(), "Commerciant not found");
 
             Output.getInstance().getOutput().add(commandOutput);
             return;
@@ -56,8 +49,8 @@ public final class PayOnline implements Strategy {
                                 // error
                                 return;
                             }
-                            account.withdraw(convertedAmount);
-                            System.out.println("PayOnline:");
+                            account.withdraw(convertedAmount, true);
+                            System.out.println("    PayOnline: " + convertedAmount);
                             account.applyCashback(commerciant, convertedAmount);
 
                             account.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
@@ -80,15 +73,8 @@ public final class PayOnline implements Strategy {
         }
 
         // If the card was not found
-        ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
-        ObjectNode output = engine.getObjectMapper().createObjectNode();
-
-        output.put("timestamp", input.getTimestamp());
-        output.put("description", "Card not found");
-
-        commandOutput.put("command", input.getCommand());
-        commandOutput.set("output", output);
-        commandOutput.put("timestamp", input.getTimestamp());
+        ObjectNode commandOutput = TheNotFoundError
+                .makeOutput(input, engine.getObjectMapper(), "Card not found");
 
         Output.getInstance().getOutput().add(commandOutput);
     }

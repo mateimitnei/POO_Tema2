@@ -1,6 +1,6 @@
 package org.poo.system.cashback;
 
-public class CashBackFactory {
+public final class CashBackFactory {
 
     private CashBackFactory() { }
 

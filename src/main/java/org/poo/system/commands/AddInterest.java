@@ -2,6 +2,7 @@ package org.poo.system.commands;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
+import org.poo.system.TheNotFoundError;
 import org.poo.system.Engine;
 import org.poo.system.Output;
 import org.poo.system.User;
@@ -23,15 +24,9 @@ public final class AddInterest implements Strategy {
                     }
 
                     // If the account is not a savings account
-                    ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
-                    ObjectNode output = engine.getObjectMapper().createObjectNode();
-
-                    output.put("timestamp", input.getTimestamp());
-                    output.put("description", "This is not a savings account");
-
-                    commandOutput.put("command", input.getCommand());
-                    commandOutput.set("output", output);
-                    commandOutput.put("timestamp", input.getTimestamp());
+                    ObjectNode commandOutput = TheNotFoundError
+                            .makeOutput(input, engine.getObjectMapper(),
+                                    "This is not a savings account");
 
                     Output.getInstance().getOutput().add(commandOutput);
                     return;
