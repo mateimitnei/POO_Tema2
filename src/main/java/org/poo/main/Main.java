@@ -78,6 +78,9 @@ public final class Main {
 
         Engine bankEngine = Engine.getInstance();
         bankEngine.init(inputData);
+
+        System.out.println("\n" + filePath1 + "\n");
+
         bankEngine.execute();
 
         Utils.resetRandom();

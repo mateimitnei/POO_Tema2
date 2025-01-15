@@ -2,10 +2,7 @@ package org.poo.system.commands;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
-import org.poo.system.Engine;
-import org.poo.system.ExchangeCurrency;
-import org.poo.system.Output;
-import org.poo.system.User;
+import org.poo.system.*;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.cards.Card;
 import org.poo.system.transactions.Transaction;
@@ -18,7 +15,28 @@ public final class PayOnline implements Strategy {
     @Override
     public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
-        ExchangeCurrency exchangeRates = new ExchangeCurrency(engine.getInput().getExchangeRates());
+
+        Commerciant commerciant = CommerciantList.getInstance().getCommerciants()
+                    .stream().filter(c -> c.getName().equals(input.getCommerciant()))
+                    .findFirst().orElse(null);
+
+        if (commerciant == null) {
+            // If the commerciant was not found
+            ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
+            ObjectNode output = engine.getObjectMapper().createObjectNode();
+
+            output.put("timestamp", input.getTimestamp());
+            output.put("description", "Commerciant not found");
+
+            commandOutput.put("command", input.getCommand());
+            commandOutput.set("output", output);
+            commandOutput.put("timestamp", input.getTimestamp());
+
+            Output.getInstance().getOutput().add(commandOutput);
+            return;
+        }
+
+        ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
 
         for (User user : engine.getUsers()) {
             for (BankAccount account : user.getAccounts()) {
@@ -26,7 +44,7 @@ public final class PayOnline implements Strategy {
                     if (card.getCardNumber().equals(input.getCardNumber())) {
 
                         if (card.getStatus().equals("frozen")) {
-                            account.addTransaction(new Transaction(input.getTimestamp(),
+                            account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                     "The card is frozen"));
                             return;
                         }
@@ -38,9 +56,11 @@ public final class PayOnline implements Strategy {
                                 // error
                                 return;
                             }
-                            account.withdraw(convertedAmount, exchangeRates);
+                            account.withdraw(convertedAmount);
+                            System.out.println("PayOnline:");
+                            account.applyCashback(commerciant, convertedAmount);
 
-                            account.addTransaction(TransactionFactory.createTransaction(input, Map.of(
+                            account.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
                                     "amount", String.valueOf(convertedAmount),
                                     "commerciant", input.getCommerciant(),
                                     "iban", account.getIban()
@@ -49,7 +69,7 @@ public final class PayOnline implements Strategy {
                             card.madePayment(account, user.getEmail(), input.getTimestamp());
 
                         } catch (ArithmeticException e) { // Exception from account.withdraw()
-                            account.addTransaction(new Transaction(input.getTimestamp(),
+                            account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                     "Insufficient funds"));
                         }
 

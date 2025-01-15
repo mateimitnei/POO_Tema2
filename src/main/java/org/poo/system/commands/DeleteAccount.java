@@ -37,7 +37,7 @@ public final class DeleteAccount implements Strategy {
             try {
                 for (BankAccount account : owner.getAccounts()) {
                     if (account.getIban().equals(input.getAccount())) {
-                        account.addTransaction(new Transaction(input.getTimestamp(),
+                        account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                 "Account couldn't be deleted - there are funds remaining"));
                         break;
                     }

@@ -21,7 +21,7 @@ public class Transaction {
 
     /**
      * Checks if it's an interest related transaction.
-     * To be overridden by interest related transactions.
+     * To be overridden by interest related transactionsLog.
      *
      * @return false by default
      */

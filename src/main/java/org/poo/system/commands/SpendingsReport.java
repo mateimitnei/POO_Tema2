@@ -49,7 +49,7 @@ public final class SpendingsReport implements Strategy {
 
             Map<String, Double> commerciantsMap = new HashMap<>();
 
-            for (Transaction transaction : accountFound.getTransactions()) {
+            for (Transaction transaction : accountFound.getTransactionsLog()) {
                 if (transaction.getDescription().equals("Card payment")
                         && transaction.getTimestamp() >= input.getStartTimestamp()
                         && transaction.getTimestamp() <= input.getEndTimestamp()) {
@@ -80,7 +80,7 @@ public final class SpendingsReport implements Strategy {
             output.put("balance", accountFound.getBalance());
             output.put("currency", accountFound.getCurrency());
 
-            output.set("transactions", transactionsArray);
+            output.set("transactionsLog", transactionsArray);
             output.set("commerciants", commerciantsArray);
         }
 

@@ -3,6 +3,8 @@ package org.poo.system.accounts;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.Getter;
 import lombok.Setter;
+import org.poo.system.Commerciant;
+import org.poo.system.CommerciantList;
 import org.poo.system.ExchangeCurrency;
 import org.poo.system.User;
 import org.poo.system.cards.Card;
@@ -12,7 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter @Setter
 public abstract class BankAccount {
@@ -22,26 +26,80 @@ public abstract class BankAccount {
     private String currency;
     private ArrayList<Card> cards;
     private String alias;
-    private static final int THRESHOLD = 30;
-    private List<Transaction> transactions;
     private User owner;
+    private List<Transaction> transactionsLog;
+    private Map<String, Boolean> discounts;
+    private Map<Commerciant, Integer> transactionsCount;
+    private double totalSpent; // Only from commerciants that use the SpendingThreshold strategy
+    private static final int THRESHOLD = 30;
     private static final double STANDARD_FEE = 0.02;
     private static final double SILVER_FEE = 0.01;
     private static final double SILVER_THRESHOLD = 500.0;
 
     public BankAccount(final String currency, final User owner) {
         this.iban = Utils.generateIBAN();
+        this.currency = currency;
+        this.owner = owner;
         balance = 0.0;
         minBalance = 0.0;
-        this.currency = currency;
-        cards = new ArrayList<>();
         alias = "";
-        transactions = new ArrayList<>();
-        this.owner = owner;
+        cards = new ArrayList<>();
+        transactionsLog = new ArrayList<>();
+        discounts = new HashMap<>();
+        transactionsCount = new HashMap<>();
+        totalSpent = 0.0;
     }
 
-    public void addTransaction(final Transaction transaction) {
-        transactions.add(transaction);
+    private void madeTransaction(final Commerciant commerciant, final double amount) {
+
+        Map<String, String> commerciantsMap = CommerciantList.getInstance().getMap();
+        if (commerciantsMap.get(commerciant.getName()).equals("NrOfTransactions")) {
+            transactionsCount.put(commerciant, transactionsCount.getOrDefault(commerciant, 0) + 1);
+
+            if (transactionsCount.get(commerciant) >= 10
+                    && !discounts.containsKey("Tech")) {
+                discounts.put("Tech", true);
+
+            } else if (transactionsCount.get(commerciant) >= 5
+                    && !discounts.containsKey("Clothes")) {
+                discounts.put("Clothes", true);
+
+            } else if (transactionsCount.get(commerciant) >= 2
+                    && !discounts.containsKey("Food")) {
+                discounts.put("Food", true);
+            }
+
+        } else { // Commerciant uses the SpendingThreshold strategy
+            ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
+            totalSpent += exchanger.exchange(currency, "RON", amount, new ArrayList<>());
+        }
+    }
+
+    /**
+     * Applies the cashback strategy of the commerciant to which a payment is being made.
+     *
+     * @param commerciant the commerciant
+     * @param amount the amount of the transaction
+     */
+    public void applyCashback(final Commerciant commerciant, final double amount) {
+        double cashBackRate = commerciant.getCashbackStrategy()
+                .calculateCashBack(this, commerciant, amount);
+
+        if (cashBackRate > 0.0) {
+            deposit(amount * cashBackRate);
+            System.out.println("Cashback: " + amount * cashBackRate);
+        }
+
+        madeTransaction(commerciant, amount);
+    }
+
+
+    /**
+     * Adds a transaction to be printed at "printTransactions" or "report".
+     * @param transaction the transaction to be added
+     */
+    public void addToTransactionLog(final Transaction transaction) {
+        transactionsLog.add(transaction);
     }
 
     /**
@@ -64,8 +122,8 @@ public abstract class BankAccount {
      * Withdraws money from the account.
      * @param amount the amount to be withdrawn
      */
-    public void withdraw(double amount, final ExchangeCurrency exchange) {
-        amount = applyFee(amount, exchange);
+    public void withdraw(double amount) {
+        amount = applyFee(amount);
         if (balance >= amount) {
             balance -= amount;
         } else {
@@ -73,12 +131,13 @@ public abstract class BankAccount {
         }
     }
 
-    private double applyFee(double amount, final ExchangeCurrency exchange) {
+    private double applyFee(double amount) {
         if (owner.getPlan().equals("standard")) {
             amount += STANDARD_FEE * amount;
             return amount;
         }
-        double converted = exchange.exchange(currency, "RON", amount, new ArrayList<>());
+        ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
+        double converted = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
         if (owner.getPlan().equals("silver") && converted > SILVER_THRESHOLD) {
             amount += SILVER_FEE * amount;
         }

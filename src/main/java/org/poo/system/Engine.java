@@ -43,10 +43,13 @@ public final class Engine {
      * @param fileInput the input file in JSON format
      */
     public void init(final ObjectInput fileInput) {
-        this.input = fileInput;
+        input = fileInput;
         users = new ArrayList<>();
         commerciants = new ArrayList<>();
         objectMapper = new ObjectMapper();
+
+        ExchangeCurrency.getInstance().init(input.getExchangeRates());
+        CommerciantList.getInstance().init(input.getCommerciants());
 
         for (UserInput userInput : fileInput.getUsers()) {
             users.add(new User(userInput));

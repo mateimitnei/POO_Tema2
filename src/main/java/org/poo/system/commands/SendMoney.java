@@ -15,7 +15,7 @@ public final class SendMoney implements Strategy {
     @Override
     public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
-        ExchangeCurrency exchangeRates = new ExchangeCurrency(engine.getInput().getExchangeRates());
+        ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
 
         BankAccount senderAccount = null;
         BankAccount receiverAccount = null;
@@ -40,22 +40,24 @@ public final class SendMoney implements Strategy {
                 return;
             }
 
-            senderAccount.withdraw(input.getAmount(), exchangeRates);
-            senderAccount.addTransaction(TransactionFactory.createTransaction(input, Map.of(
+            senderAccount.withdraw(input.getAmount());
+            senderAccount.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
                     "currency", senderAccount.getCurrency(),
                     "type", "sent",
                     "amount", String.valueOf(input.getAmount())
             )));
 
             receiverAccount.deposit(convertedAmount);
-            receiverAccount.addTransaction(TransactionFactory.createTransaction(input, Map.of(
+            receiverAccount.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
                     "currency", receiverAccount.getCurrency(),
                     "type", "received",
                     "amount", String.valueOf(convertedAmount)
             )));
 
+            System.out.println("SendMoney:");
+
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
-            senderAccount.addTransaction(new Transaction(input.getTimestamp(),
+            senderAccount.addToTransactionLog(new Transaction(input.getTimestamp(),
                     "Insufficient funds"));
         } catch (NullPointerException e) {
             // If the account was not found, do nothing

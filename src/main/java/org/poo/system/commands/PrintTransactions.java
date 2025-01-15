@@ -26,7 +26,7 @@ public final class PrintTransactions implements Strategy {
                 List<Transaction> allTransactions = new ArrayList<>();
 
                 for (BankAccount account : user.getAccounts()) {
-                    allTransactions.addAll(account.getTransactions());
+                    allTransactions.addAll(account.getTransactionsLog());
                 }
 
                 allTransactions.sort(Comparator.comparing(Transaction::getTimestamp));

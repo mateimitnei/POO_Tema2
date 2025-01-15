@@ -24,7 +24,7 @@ public final class CreateCard implements Strategy {
                         account.addCard(CardFactory.createCard(input.getCommand(),
                                 account.getIban(), cardNumber));
 
-                        account.addTransaction(TransactionFactory.createTransaction(input,
+                        account.addToTransactionLog(TransactionFactory.createTransaction(input,
                                 Map.of("cardNumber", cardNumber)));
                         return;
                     }

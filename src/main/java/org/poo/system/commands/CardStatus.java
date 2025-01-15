@@ -21,7 +21,7 @@ public final class CardStatus implements Strategy {
 
                         if (card.getStatus().equals("active")
                                 && account.checkStatus(card.getCardNumber()).equals("frozen")) {
-                            account.addTransaction(new Transaction(input.getTimestamp(),
+                            account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                     "You have reached the minimum amount of funds, "
                                             + "the card will be frozen"));
                         }

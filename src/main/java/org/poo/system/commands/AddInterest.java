@@ -18,7 +18,7 @@ public final class AddInterest implements Strategy {
                 if (account.getIban().equals(input.getAccount())) {
                     if (account.getAccountType().equals("savings")) {
                         account.deposit(input.getInterestRate() * account.getBalance());
-                        account.addTransaction(TransactionFactory.createTransaction(input, null));
+                        account.addToTransactionLog(TransactionFactory.createTransaction(input, null));
                         return;
                     }
 

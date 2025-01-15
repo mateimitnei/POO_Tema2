@@ -7,10 +7,20 @@ import java.util.List;
 
 public final class ExchangeCurrency {
     private final List<ExchangeRate> exchangeRates;
+    private static ExchangeCurrency instance;
 
-    public ExchangeCurrency(final ExchangeInput[] exchangeRates) {
+    private ExchangeCurrency() {
         this.exchangeRates = new ArrayList<>();
+    }
 
+    public static ExchangeCurrency getInstance() {
+        if (instance == null) {
+            instance = new ExchangeCurrency();
+        }
+        return instance;
+    }
+
+    public void init(final ExchangeInput[] exchangeRates) {
         for (ExchangeInput rate : exchangeRates) {
             ExchangeRate rateCpy = new ExchangeRate(rate, false);
             this.exchangeRates.add(rateCpy);

@@ -14,7 +14,7 @@ public final class SplitPayment implements Strategy {
     @Override
     public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
-        ExchangeCurrency exchangeRates = new ExchangeCurrency(engine.getInput().getExchangeRates());
+        ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
 
         double splitAmount = input.getAmount() / input.getAccounts().size();
 
@@ -44,7 +44,7 @@ public final class SplitPayment implements Strategy {
             for (BankAccount account : user.getAccounts()) {
                 if (input.getAccounts().contains(account.getIban())) {
                     if (!incompatibleAccount.isEmpty()) {
-                        account.addTransaction(TransactionFactory.createTransaction(input,
+                        account.addToTransactionLog(TransactionFactory.createTransaction(input,
                                 Map.of("errorIBAN", incompatibleAccount)));
                     } else {
                         double convertedAmount = exchangeRates.exchange(input.getCurrency(),
@@ -54,8 +54,8 @@ public final class SplitPayment implements Strategy {
                             return;
                         }
 
-                        account.withdraw(convertedAmount, exchangeRates);
-                        account.addTransaction(TransactionFactory.createTransaction(input,
+                        account.withdraw(convertedAmount);
+                        account.addToTransactionLog(TransactionFactory.createTransaction(input,
                                 Map.of("errorIBAN", "")));
                     }
                 }

@@ -17,13 +17,13 @@ public final class OneTimePayCard extends Card {
      */
     @Override
     public void madePayment(final BankAccount account, final String email, final int timestamp) {
-        account.addTransaction(new CardDeleted(timestamp, getCardNumber(), email,
+        account.addToTransactionLog(new CardDeleted(timestamp, getCardNumber(), email,
                 getAsociatedIban()));
 
         setCardNumber(Utils.generateCardNumber());
         setStatus("active");
 
-        account.addTransaction(new CardCreated(timestamp, getCardNumber(), email,
+        account.addToTransactionLog(new CardCreated(timestamp, getCardNumber(), email,
                 getAsociatedIban()));
     }
 }

@@ -39,7 +39,7 @@ public final class Report implements Strategy {
             output.put("balance", accountFound.getBalance());
             output.put("currency", accountFound.getCurrency());
 
-            for (Transaction transaction : accountFound.getTransactions()) {
+            for (Transaction transaction : accountFound.getTransactionsLog()) {
                 if (transaction.getTimestamp() >= input.getStartTimestamp()
                         && transaction.getTimestamp() <= input.getEndTimestamp()) {
 
@@ -54,7 +54,7 @@ public final class Report implements Strategy {
                 }
             }
 
-            output.set("transactions", transactionsArray);
+            output.set("transactionsLog", transactionsArray);
         }
 
         commandOutput.put("command", input.getCommand());

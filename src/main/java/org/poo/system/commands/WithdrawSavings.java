@@ -1,8 +1,10 @@
 package org.poo.system.commands;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
 import org.poo.system.Engine;
 import org.poo.system.ExchangeCurrency;
+import org.poo.system.Output;
 import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.transactions.Transaction;
@@ -16,7 +18,7 @@ public final class WithdrawSavings implements Strategy {
     @Override
     public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
-        ExchangeCurrency exchangeRates = new ExchangeCurrency(engine.getInput().getExchangeRates());
+        ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
 
         for (User user : engine.getUsers()) {
             for (BankAccount account : user.getAccounts()) {
@@ -24,7 +26,7 @@ public final class WithdrawSavings implements Strategy {
 
                     if (account.getAccountType().equals("savings")) {
                         if (user.getBirthDate().isAfter(LocalDate.now().minusYears(MINIMUM_AGE))) {
-                            account.addTransaction(new Transaction(input.getTimestamp(),
+                            account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                     "You don't have the minimum age required."));
                             return;
                         }
@@ -41,13 +43,13 @@ public final class WithdrawSavings implements Strategy {
                                     return;
                                 }
                                 try {
-                                    account.withdraw(convertedAmount, exchangeRates);
+                                    account.withdraw(convertedAmount);
                                     receiver.deposit(input.getAmount());
-                                    account.addTransaction(new Transaction(input.getTimestamp(),
+                                    account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                             "Savings withdrawal"));
                                     return;
                                 } catch (ArithmeticException e) { // Exception from withdraw()
-                                    account.addTransaction(new Transaction(input.getTimestamp(),
+                                    account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                             "Insufficient funds"));
                                 }
                             }
@@ -56,11 +58,24 @@ public final class WithdrawSavings implements Strategy {
                     }
 
                     // If the account is not a savings account
-                    account.addTransaction(new Transaction(input.getTimestamp(),
+                    account.addToTransactionLog(new Transaction(input.getTimestamp(),
                             "Account is not of type savings."));
                     return;
                 }
             }
         }
+
+        // If the account was not found
+        ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
+        ObjectNode output = engine.getObjectMapper().createObjectNode();
+
+        output.put("timestamp", input.getTimestamp());
+        output.put("description", "Account not found");
+
+        commandOutput.put("command", input.getCommand());
+        commandOutput.set("output", output);
+        commandOutput.put("timestamp", input.getTimestamp());
+
+        Output.getInstance().getOutput().add(commandOutput);
     }
 }

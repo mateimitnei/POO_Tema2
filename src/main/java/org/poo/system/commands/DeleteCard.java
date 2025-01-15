@@ -21,7 +21,7 @@ public final class DeleteCard implements Strategy {
                         if (card.getCardNumber().equals(input.getCardNumber())) {
                             account.getCards().remove(card);
 
-                            account.addTransaction(TransactionFactory.createTransaction(input,
+                            account.addToTransactionLog(TransactionFactory.createTransaction(input,
                                     Map.of("account", account.getIban())));
                             break;
                         }
