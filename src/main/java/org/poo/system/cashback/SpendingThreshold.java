@@ -1,8 +1,10 @@
 package org.poo.system.cashback;
 
 import org.poo.system.Commerciant;
+import org.poo.system.ExchangeCurrency;
 import org.poo.system.accounts.BankAccount;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public final class SpendingThreshold implements CashBackStrategy {
@@ -29,7 +31,14 @@ public final class SpendingThreshold implements CashBackStrategy {
     @Override
     public double calculateCashBack(final BankAccount account, final Commerciant commerciant,
                                     final double amount) {
-        double total = account.getTotalSpent() + amount;
+        ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
+        double amountInLei = exchangeRates.exchange(account.getCurrency(),
+                "RON", amount, new ArrayList<>());
+        if (amountInLei == -1) {
+            return 0.0;
+        }
+
+        double total = account.getTotalSpent() + amountInLei;
         if (total >= 500.0) {
             return thirdRate.get(account.getOwner().getPlan());
 

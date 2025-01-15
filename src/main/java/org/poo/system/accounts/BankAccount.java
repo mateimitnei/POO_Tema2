@@ -137,8 +137,8 @@ public abstract class BankAccount {
             return amount;
         }
         ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
-        double converted = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
-        if (owner.getPlan().equals("silver") && converted > SILVER_THRESHOLD) {
+        double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
+        if (owner.getPlan().equals("silver") && amountInLei > SILVER_THRESHOLD) {
             amount += SILVER_FEE * amount;
         }
         return amount;

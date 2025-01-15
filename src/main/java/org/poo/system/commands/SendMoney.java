@@ -54,7 +54,7 @@ public final class SendMoney implements Strategy {
                     "amount", String.valueOf(convertedAmount)
             )));
 
-            System.out.println("SendMoney:");
+            // System.out.println("SendMoney:");
 
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
             senderAccount.addToTransactionLog(new Transaction(input.getTimestamp(),

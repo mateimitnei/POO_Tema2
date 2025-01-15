@@ -1,17 +1,17 @@
 package org.poo.system;
 
+import lombok.Getter;
 import org.poo.fileio.ExchangeInput;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class ExchangeCurrency {
-    private final List<ExchangeRate> exchangeRates;
+    @Getter
+    private List<ExchangeRate> exchangeRates;
     private static ExchangeCurrency instance;
 
-    private ExchangeCurrency() {
-        this.exchangeRates = new ArrayList<>();
-    }
+    private ExchangeCurrency() { }
 
     public static ExchangeCurrency getInstance() {
         if (instance == null) {
@@ -21,6 +21,8 @@ public final class ExchangeCurrency {
     }
 
     public void init(final ExchangeInput[] exchangeRates) {
+        this.exchangeRates = new ArrayList<>();
+
         for (ExchangeInput rate : exchangeRates) {
             ExchangeRate rateCpy = new ExchangeRate(rate, false);
             this.exchangeRates.add(rateCpy);
