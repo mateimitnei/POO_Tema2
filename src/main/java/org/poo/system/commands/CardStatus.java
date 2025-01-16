@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
 import org.poo.system.Engine;
 import org.poo.system.Output;
+import org.poo.system.TheNotFoundError;
 import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.cards.Card;
@@ -33,15 +34,8 @@ public final class CardStatus implements Strategy {
         }
 
         // If the card was not found
-        ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
-        ObjectNode output = engine.getObjectMapper().createObjectNode();
-
-        output.put("timestamp", input.getTimestamp());
-        output.put("description", "Card not found");
-
-        commandOutput.put("command", input.getCommand());
-        commandOutput.set("output", output);
-        commandOutput.put("timestamp", input.getTimestamp());
+        ObjectNode commandOutput = TheNotFoundError
+                .makeOutput(input, engine.getObjectMapper(), "Card not found");
 
         Output.getInstance().getOutput().add(commandOutput);
     }

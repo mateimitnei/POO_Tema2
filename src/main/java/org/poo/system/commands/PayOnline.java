@@ -14,6 +14,11 @@ import java.util.Map;
 public final class PayOnline implements Strategy {
     @Override
     public void execute(final CommandInput input) {
+
+        if (input.getAmount() <= 0) {
+            return;
+        }
+
         Engine engine = Engine.getInstance();
 
         Commerciant commerciant = CommerciantList.getInstance().getCommerciants()

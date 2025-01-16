@@ -6,7 +6,7 @@ import org.poo.system.cashback.CashBackStrategy;
 import org.poo.system.cashback.CashBackFactory;
 
 @Getter
-public class Commerciant {
+public final class Commerciant {
     private final String name;
     private final int id;
     private final String account;

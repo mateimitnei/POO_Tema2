@@ -36,6 +36,8 @@ public final class TransactionFactory {
             case "addInterest" -> new InterestAdded(input.getTimestamp());
             case "upgradePlan" -> new PlanUpgraded(input.getTimestamp(), input.getAccount(),
                     params.get("plan"));
+            case "cashWithdrawal" -> new WithdrewCash(input.getTimestamp(),
+                    Double.parseDouble(params.get("amount")));
             default -> throw new IllegalArgumentException("Invalid transaction type.");
         };
     }

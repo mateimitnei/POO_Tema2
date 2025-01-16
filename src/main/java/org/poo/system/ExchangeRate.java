@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.poo.fileio.ExchangeInput;
 
 @Setter @Getter
-public class ExchangeRate {
+public final class ExchangeRate {
     private String from;
     private String to;
     private double rate;

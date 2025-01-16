@@ -86,6 +86,7 @@ public final class Engine {
                 case "spendingsReport" -> handler.setStrategy(new SpendingsReport());
                 case "withdrawSavings" -> handler.setStrategy(new WithdrawSavings());
                 case "upgradePlan" -> handler.setStrategy(new UpgradePlan());
+                case "cashWithdrawal" -> handler.setStrategy(new CashWithdrawal());
                 default -> { }
             }
 

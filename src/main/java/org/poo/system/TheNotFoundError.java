@@ -15,7 +15,7 @@ public final class TheNotFoundError {
         ObjectNode output = objectMapper.createObjectNode();
 
         output.put("timestamp", input.getTimestamp());
-        output.put("description", "description");
+        output.put("description", description);
 
         commandOutput.put("command", input.getCommand());
         commandOutput.set("output", output);

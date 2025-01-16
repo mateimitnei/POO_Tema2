@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class CommerciantList {
+public final class CommerciantList {
     private Map<String, String> map;
     private List<Commerciant> commerciants;
     private static CommerciantList instance;

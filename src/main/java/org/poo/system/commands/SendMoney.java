@@ -1,9 +1,8 @@
 package org.poo.system.commands;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
-import org.poo.system.Engine;
-import org.poo.system.ExchangeCurrency;
-import org.poo.system.User;
+import org.poo.system.*;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.transactions.Transaction;
 import org.poo.system.transactions.TransactionFactory;
@@ -17,19 +16,33 @@ public final class SendMoney implements Strategy {
         Engine engine = Engine.getInstance();
         ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
 
+        User senderUser = null;
+        User receiverUser = null;
         BankAccount senderAccount = null;
         BankAccount receiverAccount = null;
 
         for (User user : engine.getUsers()) {
             for (BankAccount account : user.getAccounts()) {
                 if (account.getIban().equals(input.getAccount())) {
+                    senderUser = user;
                     senderAccount = account;
                 }
                 if (account.getIban().equals(input.getReceiver())
-                        || account.getAlias().equals(input.getReceiver())) {
+                        || (account.getAlias().equals(input.getReceiver())
+                        && !account.getAlias().isEmpty())) {
+                    receiverUser = user;
                     receiverAccount = account;
                 }
             }
+        }
+
+        if (senderUser == null || receiverUser == null) {
+            // If a user was not found
+            ObjectNode commandOutput = TheNotFoundError
+                    .makeOutput(input, engine.getObjectMapper(), "User not found");
+
+            Output.getInstance().getOutput().add(commandOutput);
+            return;
         }
 
         try {
@@ -59,6 +72,7 @@ public final class SendMoney implements Strategy {
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
             senderAccount.addToTransactionLog(new Transaction(input.getTimestamp(),
                     "Insufficient funds"));
+
         } catch (NullPointerException e) {
             // If the account was not found, do nothing
         }
