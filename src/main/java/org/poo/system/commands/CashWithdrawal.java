@@ -11,7 +11,7 @@ import org.poo.system.transactions.TransactionFactory;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class CashWithdrawal implements Strategy {
+public final class CashWithdrawal implements Strategy {
     @Override
     public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
@@ -38,7 +38,14 @@ public class CashWithdrawal implements Strategy {
                                         .createTransaction(input, Map.of(
                                                 "amount", String.valueOf(input.getAmount()))));
 
-                                card.madePayment(account, user.getEmail(), input.getTimestamp());
+                                // card.madePayment(account, user.getEmail(), input.getTimestamp());
+
+                                System.out.println("    Cash withdrawal: "
+                                        + converted + " " + account.getCurrency());
+                                System.out.println("    Balance: "
+                                        + account.getBalance() + " " + account.getCurrency());
+                                System.out.println("    Timestamp: "
+                                        + input.getTimestamp() + "\n");
 
                             } catch (ArithmeticException e) {
                                 account.addToTransactionLog(new Transaction(input.getTimestamp(),

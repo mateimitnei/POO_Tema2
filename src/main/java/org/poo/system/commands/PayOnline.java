@@ -55,7 +55,8 @@ public final class PayOnline implements Strategy {
                                 return;
                             }
                             account.withdraw(convertedAmount, true);
-                            System.out.println("    PayOnline: " + convertedAmount);
+                            System.out.println("    PayOnline: " + convertedAmount + " " + account.getCurrency() + ", " + user.getEmail());
+                            System.out.println("    Plan: " + user.getPlan() + "\n");
                             account.applyCashback(commerciant, convertedAmount);
 
                             account.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(

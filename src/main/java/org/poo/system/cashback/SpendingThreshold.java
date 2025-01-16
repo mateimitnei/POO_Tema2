@@ -13,19 +13,19 @@ public final class SpendingThreshold implements CashBackStrategy {
     private static final double SECOND_RATE_THRESHOLD = 300.0;
     private static final double THIRD_RATE_THRESHOLD = 500.0;
 
-    private static final Map<String, Double> firstRate = Map.of(
+    private static final Map<String, Double> FIRST_RATE = Map.of(
         "standard", 0.001,
         "student", 0.001,
         "silver", 0.003,
         "gold", 0.005
     );
-    private static final Map<String, Double> secondRate = Map.of(
+    private static final Map<String, Double> SECOND_RATE = Map.of(
         "standard", 0.002,
         "student", 0.002,
         "silver", 0.004,
         "gold", 0.0055
     );
-    private static final Map<String, Double> thirdRate = Map.of(
+    private static final Map<String, Double> THIRD_RATE = Map.of(
         "standard", 0.0025,
         "student", 0.0025,
         "silver", 0.005,
@@ -42,15 +42,15 @@ public final class SpendingThreshold implements CashBackStrategy {
             return 0.0;
         }
 
-        double total = account.getTotalSpent().getOrDefault(commerciant, 0.0) + amountInLei;
+        double total = account.getTotalSpent() + amountInLei;
         if (total >= THIRD_RATE_THRESHOLD) {
-            return thirdRate.get(account.getOwner().getPlan());
+            return THIRD_RATE.get(account.getOwner().getPlan());
 
         } else if (total >= SECOND_RATE_THRESHOLD) {
-            return secondRate.get(account.getOwner().getPlan());
+            return SECOND_RATE.get(account.getOwner().getPlan());
 
         } else if (total >= FIRST_RATE_THRESHOLD) {
-            return firstRate.get(account.getOwner().getPlan());
+            return FIRST_RATE.get(account.getOwner().getPlan());
         }
 
         return 0.0;

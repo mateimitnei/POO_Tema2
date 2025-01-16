@@ -80,7 +80,7 @@ public final class SpendingsReport implements Strategy {
             output.put("balance", accountFound.getBalance());
             output.put("currency", accountFound.getCurrency());
 
-            output.set("transactionsLog", transactionsArray);
+            output.set("transactions", transactionsArray);
             output.set("commerciants", commerciantsArray);
         }
 

@@ -14,10 +14,7 @@ public final class CommerciantList {
     private List<Commerciant> commerciants;
     private static CommerciantList instance;
 
-    private CommerciantList() {
-        map = new HashMap<>();
-        commerciants = new ArrayList<>();
-    }
+    private CommerciantList() { }
 
     /**
      * Singleton instance for CommerciantList.
@@ -38,6 +35,9 @@ public final class CommerciantList {
      * @param inputCommerciants the commerciants to be initialized
      */
     public void init(CommerciantInput[] inputCommerciants) {
+        map = new HashMap<>();
+        commerciants = new ArrayList<>();
+
         for (CommerciantInput commerciantInput : inputCommerciants) {
             Commerciant commerciant = new Commerciant(commerciantInput);
             commerciants.add(commerciant);

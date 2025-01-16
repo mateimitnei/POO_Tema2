@@ -18,8 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@Setter
+@Getter @Setter
 public abstract class BankAccount {
     private final String iban;
     private double balance;
@@ -31,7 +30,7 @@ public abstract class BankAccount {
     private List<Transaction> transactionsLog;
     private Map<String, Boolean> discounts;
     private Map<Commerciant, Integer> transactionsCount;
-    private Map<Commerciant, Double> totalSpent;
+    private double totalSpent;
     private static final int THRESHOLD = 30;
     private static final double STANDARD_FEE = 0.002;
     private static final double SILVER_FEE = 0.001;
@@ -49,7 +48,7 @@ public abstract class BankAccount {
         transactionsLog = new ArrayList<>();
         discounts = new HashMap<>();
         transactionsCount = new HashMap<>();
-        totalSpent = new HashMap<>();
+        totalSpent = 0.0;
     }
 
     private void madeTransaction(final Commerciant commerciant, final double amount) {
@@ -71,10 +70,10 @@ public abstract class BankAccount {
                 discounts.put("Food", true);
             }
 
-        } else { // Commerciant uses the SpendingThreshold strategy
+        } else if (commerciantsMap.get(commerciant.getName()).equals("spendingThreshold")) {
             ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
-            Double converted = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
-            totalSpent.put(commerciant, totalSpent.getOrDefault(commerciant, 0.0) + converted);
+            double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
+            totalSpent += amountInLei;
         }
     }
 
@@ -90,12 +89,13 @@ public abstract class BankAccount {
 
         if (cashBackRate > 0.0) {
             deposit(amount * cashBackRate);
-            System.out.println("    Cashback: " + cashBackRate + " % of " + amount + " = " + amount * cashBackRate);
+
+            System.out.println("    Cashback: " + cashBackRate + " % of " + amount
+                    + " = " + amount * cashBackRate + "\n");
         }
 
         madeTransaction(commerciant, amount);
     }
-
 
     /**
      * Adds a transaction to be printed at "printTransactions" or "report".
@@ -129,38 +129,40 @@ public abstract class BankAccount {
      *
      * @param amount the amount to be withdrawn
      */
-    public void withdraw(double amount, final boolean isPayement) {
-        amount = applyFee(amount);
-        if (balance >= amount) {
-            balance -= amount;
+    public void withdraw(final double amount, final boolean isPayment) {
+        double amountCpy = applyFee(amount);
+        if (balance >= amountCpy) {
+            balance -= amountCpy;
         } else {
             throw new ArithmeticException("Insufficient funds");
         }
 
         // Check if the account is eligible for the silver to gold plan upgrade
-        if (isPayement) {
+        if (isPayment) {
             ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
-            double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
+            double amountInLei = exchanger.exchange(currency, "RON", amountCpy, new ArrayList<>());
             if (amountInLei >= PAYMENT_THRESHOLD && owner.getPlan().equals("silver")) {
                 owner.setPaymentCounter(owner.getPaymentCounter() + 1);
                 if (owner.getPaymentCounter() >= 5) {
                     owner.setPlan("gold");
+                    owner.setSpendingThreshold(amountInLei);
                 }
             }
         }
     }
 
-    private double applyFee(double amount) {
+    private double applyFee(final double amount) {
+        double amountCpy = amount;
         if (owner.getPlan().equals("standard")) {
-            amount += STANDARD_FEE * amount;
-            return amount;
+            amountCpy += STANDARD_FEE * amountCpy;
+            return amountCpy;
         }
         ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
-        double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
+        double amountInLei = exchanger.exchange(currency, "RON", amountCpy, new ArrayList<>());
         if (owner.getPlan().equals("silver") && amountInLei >= SILVER_THRESHOLD) {
-            amount += SILVER_FEE * amount;
+            amountCpy += SILVER_FEE * amountCpy;
         }
-        return amount;
+        return amountCpy;
     }
 
     /**

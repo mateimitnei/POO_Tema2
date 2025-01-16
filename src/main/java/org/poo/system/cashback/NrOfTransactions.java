@@ -7,7 +7,7 @@ import java.util.Map;
 
 public final class NrOfTransactions implements CashBackStrategy {
 
-    private static final Map<String, Double> rates = Map.of(
+    private static final Map<String, Double> RATES = Map.of(
         "Food", 0.02,
         "Clothes", 0.05,
         "Tech", 0.1
@@ -18,7 +18,7 @@ public final class NrOfTransactions implements CashBackStrategy {
                                     final double amount) {
         if (account.getDiscounts().getOrDefault(commerciant.getType(), false)) {
             account.getDiscounts().put(commerciant.getType(), false);
-            return rates.get(commerciant.getType());
+            return RATES.get(commerciant.getType());
         }
         return 0.0;
     }

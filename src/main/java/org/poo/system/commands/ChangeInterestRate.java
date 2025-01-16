@@ -19,7 +19,8 @@ public final class ChangeInterestRate implements Strategy {
                 if (account.getIban().equals(input.getAccount())) {
                     if (account.getAccountType().equals("savings")) {
                         ((SavingsAccount) account).setInterestRate(input.getInterestRate());
-                        account.addToTransactionLog(TransactionFactory.createTransaction(input, null));
+                        account.addToTransactionLog(TransactionFactory.createTransaction(input,
+                                null));
                         return;
                     }
 

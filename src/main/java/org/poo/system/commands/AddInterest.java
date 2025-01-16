@@ -7,7 +7,10 @@ import org.poo.system.Engine;
 import org.poo.system.Output;
 import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
+import org.poo.system.accounts.SavingsAccount;
 import org.poo.system.transactions.TransactionFactory;
+
+import java.util.Map;
 
 public final class AddInterest implements Strategy {
     @Override
@@ -18,8 +21,16 @@ public final class AddInterest implements Strategy {
             for (BankAccount account : user.getAccounts()) {
                 if (account.getIban().equals(input.getAccount())) {
                     if (account.getAccountType().equals("savings")) {
-                        account.deposit(input.getInterestRate() * account.getBalance());
-                        account.addToTransactionLog(TransactionFactory.createTransaction(input, null));
+
+                        double interest =
+                                account.getBalance() * ((SavingsAccount) account).getInterestRate();
+                        account.deposit(interest);
+
+                        account.addToTransactionLog(TransactionFactory.createTransaction(input,
+                                Map.of(
+                                        "amount", String.valueOf(interest),
+                                        "currency", account.getCurrency()
+                                )));
                         return;
                     }
 

@@ -3,7 +3,7 @@ package org.poo.system.transactions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class PlanUpgraded extends Transaction{
+public final class PlanUpgraded extends Transaction {
     private final String iban;
     private final String plan;
 

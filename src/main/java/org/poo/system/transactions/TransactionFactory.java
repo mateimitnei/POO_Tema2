@@ -33,7 +33,8 @@ public final class TransactionFactory {
                     input.getAmount(), input.getCurrency(), params.get("errorIBAN"));
             case "changeInterestRate" -> new RateChanged(input.getTimestamp(),
                     input.getInterestRate());
-            case "addInterest" -> new InterestAdded(input.getTimestamp());
+            case "addInterest" -> new InterestAdded(input.getTimestamp(),
+                    Double.parseDouble(params.get("amount")), params.get("currency"));
             case "upgradePlan" -> new PlanUpgraded(input.getTimestamp(), input.getAccount(),
                     params.get("plan"));
             case "cashWithdrawal" -> new WithdrewCash(input.getTimestamp(),

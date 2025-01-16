@@ -8,8 +8,8 @@ public final class TheNotFoundError {
 
     private TheNotFoundError() { }
 
-    public static ObjectNode makeOutput(CommandInput input, ObjectMapper objectMapper,
-                                 String description) {
+    public static ObjectNode makeOutput(final CommandInput input, final ObjectMapper objectMapper,
+                                 final String description) {
 
         ObjectNode commandOutput = objectMapper.createObjectNode();
         ObjectNode output = objectMapper.createObjectNode();

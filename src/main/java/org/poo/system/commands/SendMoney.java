@@ -60,6 +60,15 @@ public final class SendMoney implements Strategy {
                     "amount", String.valueOf(input.getAmount())
             )));
 
+            Commerciant commerciant = CommerciantList.getInstance().getCommerciants()
+                    .stream().filter(c -> c.getAccount().equals(input.getReceiver()))
+                    .findFirst().orElse(null);
+
+            if (commerciant != null) {
+                senderAccount.applyCashback(commerciant, input.getAmount());
+                System.out.println("Send money to commerciant \n");
+            }
+
             receiverAccount.deposit(convertedAmount);
             receiverAccount.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
                     "currency", receiverAccount.getCurrency(),

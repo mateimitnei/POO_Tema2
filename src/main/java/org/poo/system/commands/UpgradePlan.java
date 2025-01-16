@@ -41,7 +41,8 @@ public final class UpgradePlan implements Strategy {
                         converted = exchangeRates.exchange("RON",
                                 account.getCurrency(), STANDARD_TO_SILVER, new ArrayList<>());
 
-                        System.out.println("    STANDARD_TO_SILVER " + STANDARD_TO_SILVER + ", " + user.getEmail());
+                        System.out.println("    STANDARD_TO_SILVER "
+                                + STANDARD_TO_SILVER + ", " + user.getEmail());
 
                     } else if (account.getOwner().getPlan().equals("silver")
                             && input.getNewPlanType().equals("gold")) {
@@ -49,7 +50,8 @@ public final class UpgradePlan implements Strategy {
                         converted = exchangeRates.exchange("RON",
                                 account.getCurrency(), SILVER_TO_GOLD, new ArrayList<>());
 
-                        System.out.println("    SILVER_TO_GOLD " + SILVER_TO_GOLD + ", " + user.getEmail());
+                        System.out.println("    SILVER_TO_GOLD "
+                                + SILVER_TO_GOLD + ", " + user.getEmail());
 
                     } else if ((account.getOwner().getPlan().equals("standard")
                             || account.getOwner().getPlan().equals("student"))
@@ -58,29 +60,37 @@ public final class UpgradePlan implements Strategy {
                         converted = exchangeRates.exchange("RON",
                                 account.getCurrency(), STANDARD_TO_GOLD, new ArrayList<>());
 
-                        System.out.println("    STANDARD_TO_GOLD " + STANDARD_TO_GOLD + ", " + user.getEmail());
+                        System.out.println("    STANDARD_TO_GOLD "
+                                + STANDARD_TO_GOLD + ", " + user.getEmail());
                     }
 
-                    System.out.println("    Balance: " + account.getBalance() + " " + account.getCurrency());
+                    System.out.println("    Balance: "
+                            + account.getBalance() + " " + account.getCurrency());
 
                     if (converted > 0.0) {
                         String oldPlan = user.getPlan();
                         try {
                             user.setPlan(input.getNewPlanType());
                             account.withdraw(converted, false);
+                            user.setSpendingThreshold(0.0);
 
                             account.addToTransactionLog(TransactionFactory.createTransaction(input,
                                     Map.of("plan", input.getNewPlanType())));
 
-                            System.out.println("    Plan upgraded -> " + converted + " " + account.getCurrency());
-                            System.out.println("    Balance: " + account.getBalance() + " " + account.getCurrency());
+                            System.out.println("    Plan upgraded -> "
+                                    + converted + " " + account.getCurrency());
+                            System.out.println("    Balance: "
+                                    + account.getBalance() + " " + account.getCurrency());
+                            System.out.println("    Timestamp: "
+                                    + input.getTimestamp());
 
                         } catch (ArithmeticException e) {
                             account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                     "Insufficient funds"));
                             user.setPlan(oldPlan);
 
-                            System.out.println("    Timestamp " + input.getTimestamp() + ": Insufficient funds");
+                            System.out.println("    Timestamp: "
+                                    + input.getTimestamp() + ": Insufficient funds");
                         }
 
                         System.out.println("\n");

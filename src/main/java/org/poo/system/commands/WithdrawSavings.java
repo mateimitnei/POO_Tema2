@@ -42,14 +42,23 @@ public final class WithdrawSavings implements Strategy {
                                 try {
                                     account.withdraw(convertedAmount, false);
                                     receiver.deposit(input.getAmount());
-                                    account.addToTransactionLog(new Transaction(input.getTimestamp(),
-                                            "Savings withdrawal"));
+                                    account.addToTransactionLog(
+                                            new Transaction(input.getTimestamp(),
+                                            "Savings withdrawal")
+                                    );
                                     return;
                                 } catch (ArithmeticException e) { // Exception from withdraw()
-                                    account.addToTransactionLog(new Transaction(input.getTimestamp(),
-                                            "Insufficient funds"));
+                                    account.addToTransactionLog(
+                                            new Transaction(input.getTimestamp(),
+                                            "Insufficient funds")
+                                    );
                                 }
                             }
+
+                            // If the user doesn't have a classic account
+                            account.addToTransactionLog(new Transaction(input.getTimestamp(),
+                                    "You do not have a classic account."));
+                            return;
                         }
 
                     }
