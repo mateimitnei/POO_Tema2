@@ -29,8 +29,8 @@ public final class TransactionFactory {
             case "payOnline" -> new CardPayment(input.getTimestamp(),
                     Double.parseDouble(params.get("amount")), params.get("commerciant"),
                     params.get("iban"));
-            case "splitPayment" -> new PayedWithOthers(input.getTimestamp(), input.getAccounts(),
-                    input.getAmount(), input.getCurrency(), params.get("errorIBAN"));
+            case "splitPayment" -> new PayedWithOthers(input, params.get("errorIBAN"),
+                    params.get("rejected"));
             case "changeInterestRate" -> new RateChanged(input.getTimestamp(),
                     input.getInterestRate());
             case "addInterest" -> new InterestAdded(input.getTimestamp(),

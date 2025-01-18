@@ -151,7 +151,7 @@ public abstract class BankAccount {
         }
     }
 
-    private double applyFee(final double amount) {
+    public double applyFee(final double amount) {
         double amountCpy = amount;
         if (owner.getPlan().equals("standard")) {
             amountCpy += STANDARD_FEE * amountCpy;
@@ -214,5 +214,10 @@ public abstract class BankAccount {
 
         accountNode.set("cards", cardsArray);
         return accountNode;
+    }
+
+    @Override
+    public String toString() {
+        return "    " + owner.getEmail() + "\n";
     }
 }

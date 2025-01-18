@@ -8,6 +8,7 @@ import org.poo.fileio.CommerciantInput;
 import org.poo.fileio.ObjectInput;
 import org.poo.fileio.UserInput;
 import org.poo.system.commands.*;
+import org.poo.system.splitPayment.AllPayments;
 
 import java.util.ArrayList;
 
@@ -50,6 +51,7 @@ public final class Engine {
 
         ExchangeCurrency.getInstance().init(input.getExchangeRates());
         CommerciantList.getInstance().init(input.getCommerciants());
+        AllPayments.getInstance().reset();
 
         for (UserInput userInput : fileInput.getUsers()) {
             users.add(new User(userInput));
@@ -82,6 +84,8 @@ public final class Engine {
                 case "addInterest" -> handler.setStrategy(new AddInterest());
                 case "setAlias" -> handler.setStrategy(new SetAlias());
                 case "splitPayment" -> handler.setStrategy(new SplitPayment());
+                case "acceptSplitPayment" -> handler.setStrategy(new AcceptSplitPayment());
+                case "rejectSplitPayment" -> handler.setStrategy(new RejectSplitPayment());
                 case "report" -> handler.setStrategy(new Report());
                 case "spendingsReport" -> handler.setStrategy(new SpendingsReport());
                 case "withdrawSavings" -> handler.setStrategy(new WithdrawSavings());

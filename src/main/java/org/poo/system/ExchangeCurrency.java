@@ -11,7 +11,9 @@ public final class ExchangeCurrency {
     private List<ExchangeRate> exchangeRates;
     private static ExchangeCurrency instance;
 
-    private ExchangeCurrency() { }
+    private ExchangeCurrency() {
+        this.exchangeRates = new ArrayList<>();
+    }
 
     public static ExchangeCurrency getInstance() {
         if (instance == null) {
@@ -21,7 +23,7 @@ public final class ExchangeCurrency {
     }
 
     public void init(final ExchangeInput[] exchangeRates) {
-        this.exchangeRates = new ArrayList<>();
+        this.exchangeRates.clear();
 
         for (ExchangeInput rate : exchangeRates) {
             ExchangeRate rateCpy = new ExchangeRate(rate, false);
