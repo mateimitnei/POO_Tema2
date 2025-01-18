@@ -21,7 +21,7 @@ public final class AllPayments {
         return instance;
     }
 
-    public void reset() {
+    public void init() {
         payments.clear();
     }
 

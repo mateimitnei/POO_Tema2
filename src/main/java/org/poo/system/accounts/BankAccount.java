@@ -20,10 +20,10 @@ import java.util.Map;
 
 @Getter @Setter
 public abstract class BankAccount {
-    private final String iban;
-    private double balance;
+    protected final String iban;
+    protected double balance;
     private double minBalance;
-    private String currency;
+    protected String currency;
     private ArrayList<Card> cards;
     private String alias;
     private User owner;
@@ -214,10 +214,5 @@ public abstract class BankAccount {
 
         accountNode.set("cards", cardsArray);
         return accountNode;
-    }
-
-    @Override
-    public String toString() {
-        return "    " + owner.getEmail() + "\n";
     }
 }

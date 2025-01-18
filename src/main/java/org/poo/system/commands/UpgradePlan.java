@@ -26,13 +26,19 @@ public final class UpgradePlan implements Strategy {
             for (BankAccount account : user.getAccounts()) {
                 if (account.getIban().equals(input.getAccount())) {
 
+                    // If the user already has that plan
                     if (user.getPlan().equals(input.getNewPlanType())) {
                         account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                 "The user already has the " + user.getPlan() + " plan."));
                         return;
                     }
 
-                    // TODO Can't downgrade plan
+                    // If the user tries to downgrade from gold to silver
+                    if (user.getPlan().equals("gold") && input.getNewPlanType().equals("silver")) {
+                        account.addToTransactionLog(new Transaction(input.getTimestamp(),
+                                "You cannot downgrade your plan."));
+                        return;
+                    }
 
                     if ((account.getOwner().getPlan().equals("standard")
                             || account.getOwner().getPlan().equals("student"))

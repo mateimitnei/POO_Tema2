@@ -50,13 +50,21 @@ public final class User {
      */
     public String deleteAccount(final String iban) {
         for (BankAccount account : accounts) {
-            if (account.getIban().equals(iban) && account.getBalance() == 0.0) {
-                account.getCards().clear();
-                accounts.remove(account);
-                return "deleted";
+            if (account.getIban().equals(iban)) {
 
-            } else if (account.getIban().equals(iban) && account.getBalance() > 0.0) {
-                return "has money";
+                if (account.getAccountType().equals("business")
+                        && !account.getOwner().equals(this)) {
+                    return "error";
+                }
+
+                if (account.getBalance() == 0.0) {
+                    account.getCards().clear();
+                    accounts.remove(account);
+                    return "deleted";
+
+                } else if (account.getBalance() > 0.0) {
+                    return "has money";
+                }
             }
         }
 

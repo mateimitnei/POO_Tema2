@@ -8,7 +8,7 @@ import org.poo.system.transactions.TransactionFactory;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class FinalisedState extends State {
+public final class FinalisedState extends State {
 
     public FinalisedState(Payment payment) {
         super(payment);

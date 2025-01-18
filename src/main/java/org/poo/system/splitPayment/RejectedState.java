@@ -6,7 +6,7 @@ import org.poo.system.transactions.TransactionFactory;
 
 import java.util.Map;
 
-public class RejectedState extends State {
+public final class RejectedState extends State {
 
     public RejectedState(Payment payment) {
         super(payment);

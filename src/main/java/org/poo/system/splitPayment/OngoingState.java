@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class OngoingState extends State {
+public final class OngoingState extends State {
 
     public OngoingState(Payment payment) {
         super(payment);

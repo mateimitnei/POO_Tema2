@@ -51,7 +51,7 @@ public final class Engine {
 
         ExchangeCurrency.getInstance().init(input.getExchangeRates());
         CommerciantList.getInstance().init(input.getCommerciants());
-        AllPayments.getInstance().reset();
+        AllPayments.getInstance().init();
 
         for (UserInput userInput : fileInput.getUsers()) {
             users.add(new User(userInput));
@@ -91,6 +91,10 @@ public final class Engine {
                 case "withdrawSavings" -> handler.setStrategy(new WithdrawSavings());
                 case "upgradePlan" -> handler.setStrategy(new UpgradePlan());
                 case "cashWithdrawal" -> handler.setStrategy(new CashWithdrawal());
+                case "addNewBusinessAssociate" -> handler.setStrategy(new NewBusinessAssociate());
+                case "changeSpendingLimit" -> handler.setStrategy(new ChangeSpendingLimit());
+                case "changeDepositLimit" -> handler.setStrategy(new ChangeDepositLimit());
+                case "businessReport" -> handler.setStrategy(new BusinessReport());
                 default -> { }
             }
 

@@ -54,7 +54,7 @@ public final class Report implements Strategy {
                 }
             }
 
-            output.set("transactionsLog", transactionsArray);
+            output.set("transactions", transactionsArray);
         }
 
         commandOutput.put("command", input.getCommand());

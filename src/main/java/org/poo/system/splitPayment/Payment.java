@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class Payment {
+public final class Payment {
     private State state;
     private final CommandInput input;
     private final List<BankAccount> accounts;
