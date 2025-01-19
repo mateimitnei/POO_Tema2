@@ -13,11 +13,13 @@ public abstract class Card {
     @Setter
     private String status;
     private final String asociatedIban;
+    private final String creator;
 
-    public Card(final String iban, final String cardNumber) {
+    public Card(final String iban, final String cardNumber, final String email) {
         this.cardNumber = cardNumber;
         this.status = "active";
         asociatedIban = iban;
+        creator = email;
     }
 
     /**

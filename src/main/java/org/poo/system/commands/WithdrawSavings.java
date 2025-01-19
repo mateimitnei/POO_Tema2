@@ -5,7 +5,9 @@ import org.poo.fileio.CommandInput;
 import org.poo.system.*;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.transactions.Transaction;
+import org.poo.system.transactions.TransactionFactory;
 
+import java.util.Map;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -42,25 +44,34 @@ public final class WithdrawSavings implements Strategy {
                                 try {
                                     account.withdraw(convertedAmount, false);
                                     receiver.deposit(input.getAmount());
+
                                     account.addToTransactionLog(
-                                            new Transaction(input.getTimestamp(),
-                                            "Savings withdrawal")
-                                    );
+                                            TransactionFactory.createTransaction(input, Map.of(
+                                                    "amount", String.valueOf(input.getAmount()),
+                                                    "savingsIBAN", account.getIban(),
+                                                    "classicIBAN", receiver.getIban())
+                                            ));
+                                    receiver.addToTransactionLog(
+                                            TransactionFactory.createTransaction(input, Map.of(
+                                                    "amount", String.valueOf(input.getAmount()),
+                                                    "savingsIBAN", account.getIban(),
+                                                    "classicIBAN", receiver.getIban())
+                                            ));
                                     return;
                                 } catch (ArithmeticException e) { // Exception from withdraw()
                                     account.addToTransactionLog(
                                             new Transaction(input.getTimestamp(),
                                             "Insufficient funds")
                                     );
+                                    return;
                                 }
                             }
-
-                            // If the user doesn't have a classic account
-                            account.addToTransactionLog(new Transaction(input.getTimestamp(),
-                                    "You do not have a classic account."));
-                            return;
                         }
 
+                        // If the user doesn't have a classic account
+                        account.addToTransactionLog(new Transaction(input.getTimestamp(),
+                                "You do not have a classic account."));
+                        return;
                     }
 
                     // If the account is not a savings account

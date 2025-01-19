@@ -23,6 +23,8 @@ public final class BusinessAccount extends BankAccount {
     private Map<Integer, Map<String, Double>> depositsHistory;
     private double depositLimit;
     private double spendingLimit;
+    private double totalSpentInInterval;
+    private double totalDepositedInInterval;
 
     public BusinessAccount(final String currency, final User owner) {
         super(currency, owner);
@@ -32,8 +34,9 @@ public final class BusinessAccount extends BankAccount {
         spendingsHistory = new HashMap<>();
         deposits = new HashMap<>();
         depositsHistory = new HashMap<>();
-        depositLimit = 500.0;
-        spendingLimit = 500.0;
+        ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
+        depositLimit = exchanger.exchange("RON", currency, 500.0, new ArrayList<>());
+        spendingLimit = exchanger.exchange("RON", currency, 500.0, new ArrayList<>());
     }
 
     public void addAssociate(final User associate, final String role) {
@@ -41,10 +44,11 @@ public final class BusinessAccount extends BankAccount {
         roles.put(associate.getEmail(), role);
     }
 
-    public void withdraw(final double amount, final boolean isPayment, final User user, final int timestamp) {
+    public void withdraw(final double amount, final boolean isPayment, final User user,
+                         final int timestamp) {
         ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
         double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
-        if (roles.get(user.getEmail()).equals("employee") && amountInLei > spendingLimit) {
+        if (roles.get(user.getEmail()).equals("employee") && applyFee(amountInLei) > spendingLimit) {
             return;
         }
         super.withdraw(amount, isPayment);
@@ -76,39 +80,38 @@ public final class BusinessAccount extends BankAccount {
         output.put("spending limit", spendingLimit);
         output.put("deposit limit", depositLimit);
         output.put("statistics type", "transaction");
-        double totalSpent = 0.0;
-        double totalDeposited = 0.0;
+
+        totalSpentInInterval = 0.0;
+        totalDepositedInInterval = 0.0;
         ArrayNode managersArray = objectMapper.createArrayNode();
         for (User user : associates) {
             if (roles.get(user.getEmail()).equals("manager")) {
-                managersArray.add(mappedAssociate(objectMapper, user,
-                        totalSpent, totalDeposited, start, end));
+                managersArray.add(mappedAssociate(objectMapper, user, start, end));
             }
         }
         ArrayNode employeesArray = objectMapper.createArrayNode();
         for (User user : associates) {
             if (roles.get(user.getEmail()).equals("employee")) {
-                employeesArray.add(mappedAssociate(objectMapper, user,
-                        totalSpent, totalDeposited, start, end));
+                employeesArray.add(mappedAssociate(objectMapper, user, start, end));
             }
         }
+
         output.set("managers", managersArray);
         output.set("employees", employeesArray);
-        output.put("total spent", totalSpent);
-        output.put("total deposited", totalDeposited);
+        output.put("total spent", totalSpentInInterval);
+        output.put("total deposited", totalDepositedInInterval);
         return output;
     }
 
     private ObjectNode mappedAssociate(final ObjectMapper objectMapper, final User user,
-                                       double totalSpent, double totalDeposited,
                                        final int start, final int end) {
         ObjectNode userNode = objectMapper.createObjectNode();
         userNode.put("username", user.getLastName() + " " + user.getFirstName());
         double spent = spentInInterval(user.getEmail(), start, end);
-        totalSpent += spent;
+        totalSpentInInterval += spent;
         userNode.put("spent", spent);
         double deposited = depositedInInterval(user.getEmail(), start, end);
-        totalDeposited += deposited;
+        totalDepositedInInterval += deposited;
         userNode.put("deposited", deposited);
         return userNode;
     }
@@ -119,20 +122,30 @@ public final class BusinessAccount extends BankAccount {
     }
 
     private double spentInInterval(final String email, final int start, final int end) {
-        return spendingsHistory.entrySet().stream()
+        return calculateAmount(email, start, end, spendingsHistory);
+    }
+
+    private double depositedInInterval(final String email, final int start, final int end) {
+        return calculateAmount(email, start, end, depositsHistory);
+    }
+
+    private double calculateAmount(String email, int start, int end,
+                                   Map<Integer, Map<String, Double>> history) {
+
+        double atStart = history.entrySet().stream()
+                .filter(timestamp -> timestamp.getKey() <= start)
+                .flatMap(timestamp -> timestamp.getValue().entrySet().stream())
+                .filter(spent -> spent.getKey().equals(email))
+                .mapToDouble(Map.Entry::getValue)
+                .reduce((first, second) -> second).orElse(0.0);
+
+        double atEnd = history.entrySet().stream()
                 .filter(timestamp -> timestamp.getKey() >= start && timestamp.getKey() <= end)
                 .flatMap(timestamp -> timestamp.getValue().entrySet().stream())
                 .filter(spent -> spent.getKey().equals(email))
                 .mapToDouble(Map.Entry::getValue)
-                .sum();
-    }
+                .reduce((first, second) -> second).orElse(0.0);
 
-    private double depositedInInterval(final String email, final int start, final int end) {
-        return depositsHistory.entrySet().stream()
-                .filter(timestamp -> timestamp.getKey() >= start && timestamp.getKey() <= end)
-                .flatMap(timestamp -> timestamp.getValue().entrySet().stream())
-                .filter(deposited -> deposited.getKey().equals(email))
-                .mapToDouble(Map.Entry::getValue)
-                .sum();
+        return atEnd - atStart;
     }
 }

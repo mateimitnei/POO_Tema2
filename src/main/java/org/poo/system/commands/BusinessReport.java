@@ -17,25 +17,33 @@ public class BusinessReport implements Strategy {
 
         for (User user : engine.getUsers()) {
             for (BankAccount account : user.getAccounts()) {
-                if (account.getAccountType().equals("business")) {
-                    ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
+                if (account.getIban().equals(input.getAccount())) {
+                    if (account.getAccountType().equals("business")) {
+                        ObjectNode commandOutput = engine.getObjectMapper().createObjectNode();
 
-                    ObjectNode output = ((BusinessAccount) account).mappedTransactionReport(
-                            engine.getObjectMapper(),
-                            input.getStartTimestamp(),
-                            input.getEndTimestamp()
-                    );
+                        ObjectNode output = new ObjectNode(null);
 
-                    commandOutput.put("command", input.getCommand());
-                    commandOutput.set("output", output);
-                    commandOutput.put("timestamp", input.getTimestamp());
+                        if (input.getType().equals("transaction")) {
+                            output = ((BusinessAccount) account).mappedTransactionReport(
+                                    engine.getObjectMapper(),
+                                    input.getStartTimestamp(),
+                                    input.getEndTimestamp()
+                            );
+                        }
 
-                    Output.getInstance().getOutput().add(commandOutput);
+                        commandOutput.put("command", input.getCommand());
+                        commandOutput.set("output", output);
+                        commandOutput.put("timestamp", input.getTimestamp());
+
+                        Output.getInstance().getOutput().add(commandOutput);
+
+                        return;
+                    }
+
+                    account.addToTransactionLog(new Transaction(input.getTimestamp(),
+                            "Account is not of type business"));
                     return;
                 }
-
-                account.addToTransactionLog(new Transaction(input.getTimestamp(),
-                        "Account is not of type business"));
             }
         }
 

@@ -52,11 +52,6 @@ public final class User {
         for (BankAccount account : accounts) {
             if (account.getIban().equals(iban)) {
 
-                if (account.getAccountType().equals("business")
-                        && !account.getOwner().equals(this)) {
-                    return "error";
-                }
-
                 if (account.getBalance() == 0.0) {
                     account.getCards().clear();
                     accounts.remove(account);
@@ -73,7 +68,7 @@ public final class User {
 
     public void setSpendingThreshold(final double amount) {
         for (BankAccount account : accounts) {
-            account.setTotalSpent(amount);
+            // account.setTotalSpendings(amount);
         }
     }
 

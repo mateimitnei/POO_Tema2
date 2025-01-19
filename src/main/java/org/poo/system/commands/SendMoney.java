@@ -36,8 +36,25 @@ public final class SendMoney implements Strategy {
             }
         }
 
-        if (senderUser == null || receiverUser == null) {
-            // If a user was not found
+        if (senderUser == null) {
+            // If the user was not found
+            ObjectNode commandOutput = TheNotFoundError
+                    .makeOutput(input, engine.getObjectMapper(), "User not found");
+
+            Output.getInstance().getOutput().add(commandOutput);
+        }
+
+        Commerciant commerciant = CommerciantList.getInstance().getCommerciants()
+                .stream().filter(c -> c.getAccount().equals(input.getReceiver()))
+                .findFirst().orElse(null);
+
+        if (commerciant != null) {
+            sendToCommerciant(commerciant, senderAccount, input);
+            return;
+        }
+
+        if (receiverUser == null) {
+            // If the user was not found
             ObjectNode commandOutput = TheNotFoundError
                     .makeOutput(input, engine.getObjectMapper(), "User not found");
 
@@ -60,15 +77,6 @@ public final class SendMoney implements Strategy {
                     "amount", String.valueOf(input.getAmount())
             )));
 
-            Commerciant commerciant = CommerciantList.getInstance().getCommerciants()
-                    .stream().filter(c -> c.getAccount().equals(input.getReceiver()))
-                    .findFirst().orElse(null);
-
-            if (commerciant != null) {
-                senderAccount.applyCashback(commerciant, input.getAmount());
-                System.out.println("Send money to commerciant \n");
-            }
-
             receiverAccount.deposit(convertedAmount);
             receiverAccount.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
                     "currency", receiverAccount.getCurrency(),
@@ -77,6 +85,28 @@ public final class SendMoney implements Strategy {
             )));
 
             // System.out.println("SendMoney:");
+
+        } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
+            senderAccount.addToTransactionLog(new Transaction(input.getTimestamp(),
+                    "Insufficient funds"));
+
+        } catch (NullPointerException e) {
+            // If the account was not found, do nothing
+        }
+    }
+
+    private void sendToCommerciant(final Commerciant commerciant, final BankAccount senderAccount,
+                                   final CommandInput input) {
+        try {
+            senderAccount.withdraw(input.getAmount(), true);
+            senderAccount.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
+                    "currency", senderAccount.getCurrency(),
+                    "type", "sent",
+                    "amount", String.valueOf(input.getAmount())
+            )));
+
+            senderAccount.applyCashback(commerciant, input.getAmount());
+            System.out.println("Send money to commerciant \n");
 
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
             senderAccount.addToTransactionLog(new Transaction(input.getTimestamp(),

@@ -29,8 +29,8 @@ public abstract class BankAccount {
     private User owner;
     private List<Transaction> transactionsLog;
     private Map<String, Boolean> discounts;
-    private Map<Commerciant, Integer> transactionsCount;
-    private double totalSpent;
+    private Map<Commerciant, Integer> transactionsCount; // For the NrOfTransactions cashback
+    private Map<Commerciant, Double> totalSpendings; // For the SpendingThreshold cashback
     private static final int THRESHOLD = 30;
     private static final double STANDARD_FEE = 0.002;
     private static final double SILVER_FEE = 0.001;
@@ -48,7 +48,7 @@ public abstract class BankAccount {
         transactionsLog = new ArrayList<>();
         discounts = new HashMap<>();
         transactionsCount = new HashMap<>();
-        totalSpent = 0.0;
+        totalSpendings = new HashMap<>();
     }
 
     private void madeTransaction(final Commerciant commerciant, final double amount) {
@@ -73,7 +73,7 @@ public abstract class BankAccount {
         } else if (commerciantsMap.get(commerciant.getName()).equals("spendingThreshold")) {
             ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
             double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
-            totalSpent += amountInLei;
+            totalSpendings.put(commerciant, totalSpendings.getOrDefault(commerciant, 0.0) + amountInLei);
         }
     }
 
@@ -91,7 +91,8 @@ public abstract class BankAccount {
             deposit(amount * cashBackRate);
 
             System.out.println("    Cashback: " + cashBackRate + " % of " + amount
-                    + " = " + amount * cashBackRate + "\n");
+                    + " = " + amount * cashBackRate);
+            System.out.println("    Balance: " + balance + "\n");
         }
 
         madeTransaction(commerciant, amount);
@@ -145,7 +146,7 @@ public abstract class BankAccount {
                 owner.setPaymentCounter(owner.getPaymentCounter() + 1);
                 if (owner.getPaymentCounter() >= 5) {
                     owner.setPlan("gold");
-                    owner.setSpendingThreshold(amountInLei);
+                    // owner.setSpendingThreshold(amountInLei);
                 }
             }
         }

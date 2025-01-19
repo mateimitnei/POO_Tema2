@@ -54,7 +54,7 @@ public final class PayedWithOthers extends Transaction {
             output.put("error", "Account " + errorAccount
                     + " has insufficient funds for a split payment.");
         } else if (!rejected.isEmpty()) {
-            output.put("rejected", "One user rejected the payment.");
+            output.put("error", "One user rejected the payment.");
         }
 
         return output;

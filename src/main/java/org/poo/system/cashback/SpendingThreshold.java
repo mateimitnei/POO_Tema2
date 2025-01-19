@@ -42,7 +42,7 @@ public final class SpendingThreshold implements CashBackStrategy {
             return 0.0;
         }
 
-        double total = account.getTotalSpent() + amountInLei;
+        double total = account.getTotalSpendings().getOrDefault(commerciant, 0.0) + amountInLei;
         if (total >= THIRD_RATE_THRESHOLD) {
             return THIRD_RATE.get(account.getOwner().getPlan());
 

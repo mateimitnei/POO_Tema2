@@ -39,6 +39,8 @@ public final class TransactionFactory {
                     params.get("plan"));
             case "cashWithdrawal" -> new WithdrewCash(input.getTimestamp(),
                     Double.parseDouble(params.get("amount")));
+            case "withdrawSavings" -> new WithdrewSavings(input.getTimestamp(), input.getAccount(),
+                    Double.parseDouble(params.get("amount")), params.get("classicIBAN"));
             default -> throw new IllegalArgumentException("Invalid transaction type.");
         };
     }

@@ -4,6 +4,7 @@ import org.poo.fileio.CommandInput;
 import org.poo.system.Engine;
 import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
+import org.poo.system.accounts.BusinessAccount;
 import org.poo.system.cards.Card;
 import org.poo.system.transactions.TransactionFactory;
 
@@ -15,16 +16,22 @@ public final class DeleteCard implements Strategy {
         Engine engine = Engine.getInstance();
 
         for (User user : engine.getUsers()) {
-            if (user.getEmail().equals(input.getEmail())) {
-                for (BankAccount account : user.getAccounts()) {
-                    for (Card card : account.getCards()) {
-                        if (card.getCardNumber().equals(input.getCardNumber())) {
-                            account.getCards().remove(card);
+            for (BankAccount account : user.getAccounts()) {
+                for (Card card : account.getCards()) {
+                    if (card.getCardNumber().equals(input.getCardNumber())) {
 
-                            account.addToTransactionLog(TransactionFactory.createTransaction(input,
-                                    Map.of("account", account.getIban())));
-                            break;
-                        }
+                        if (account.getAccountType().equals("business") &&
+                            (!((BusinessAccount) account).getRoles().containsKey(input.getEmail()) ||
+                            (((BusinessAccount) account).getRoles().get(input.getEmail()).equals("employee") &&
+                            !card.getCreator().equals(input.getEmail())))) {
+                                return;
+                            }
+
+                        account.getCards().remove(card);
+
+                        account.addToTransactionLog(TransactionFactory.createTransaction(input,
+                                Map.of("account", account.getIban())));
+                        break;
                     }
                 }
             }

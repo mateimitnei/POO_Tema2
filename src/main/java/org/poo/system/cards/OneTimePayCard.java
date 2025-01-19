@@ -7,8 +7,8 @@ import org.poo.utils.Utils;
 
 public final class OneTimePayCard extends Card {
 
-    public OneTimePayCard(final String iban, final String cardNumber) {
-        super(iban, cardNumber);
+    public OneTimePayCard(final String iban, final String cardNumber, final String email) {
+        super(iban, cardNumber, email);
     }
 
     /**

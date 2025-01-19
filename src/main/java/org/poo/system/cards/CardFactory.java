@@ -11,10 +11,11 @@ public final class CardFactory {
      * @param iban the IBAN of the account
      * @return the created card
      */
-    public static Card createCard(final String type, final String iban, final String cardNumber) {
+    public static Card createCard(final String type, final String iban, final String cardNumber,
+                                  final String email) {
         return switch (type) {
-            case "createCard" -> new StandardCard(iban, cardNumber);
-            case "createOneTimeCard" -> new OneTimePayCard(iban, cardNumber);
+            case "createCard" -> new StandardCard(iban, cardNumber, email);
+            case "createOneTimeCard" -> new OneTimePayCard(iban, cardNumber, email);
             default -> throw new IllegalArgumentException("Invalid card type.");
         };
     }

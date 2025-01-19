@@ -15,12 +15,26 @@ import java.util.Map;
 public final class PayOnline implements Strategy {
     @Override
     public void execute(final CommandInput input) {
-
         if (input.getAmount() <= 0) {
             return;
         }
 
         Engine engine = Engine.getInstance();
+
+        Card targetCard = engine.getUsers().stream()
+                .flatMap(u -> u.getAccounts().stream())
+                .flatMap(a -> a.getCards().stream())
+                .filter(c -> c.getCardNumber().equals(input.getCardNumber()))
+                .findFirst().orElse(null);
+
+        if (targetCard == null) {
+            // If the card was not found
+            ObjectNode commandOutput = TheNotFoundError
+                    .makeOutput(input, engine.getObjectMapper(), "Card not found");
+
+            Output.getInstance().getOutput().add(commandOutput);
+            return;
+        }
 
         Commerciant commerciant = CommerciantList.getInstance().getCommerciants()
                     .stream().filter(c -> c.getName().equals(input.getCommerciant()))
@@ -35,8 +49,6 @@ public final class PayOnline implements Strategy {
             return;
         }
 
-        ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
-
         for (User user : engine.getUsers()) {
             for (BankAccount account : user.getAccounts()) {
                 for (Card card : account.getCards()) {
@@ -49,6 +61,7 @@ public final class PayOnline implements Strategy {
                         }
 
                         try {
+                            ExchangeCurrency exchangeRates = ExchangeCurrency.getInstance();
                             double convertedAmount = exchangeRates.exchange(input.getCurrency(),
                                     account.getCurrency(), input.getAmount(), new ArrayList<>());
                             if (convertedAmount == -1) {
@@ -56,25 +69,40 @@ public final class PayOnline implements Strategy {
                                 return;
                             }
 
-                            if (account.getAccountType().equals("business")) {
+                            User associate = engine.getUsers().stream()
+                                    .filter(u -> u.getEmail().equals(input.getEmail()))
+                                    .findFirst().orElse(null);
 
-                                User associate = engine.getUsers().stream()
-                                        .filter(u -> u.getEmail().equals(input.getEmail()))
-                                        .findFirst().orElse(null);
+                            if (account.getAccountType().equals("business")
+                                    && ((BusinessAccount) account).getAssociates().contains(associate)
+                                    && associate != null) {
 
-                                if (((BusinessAccount) account).getAssociates().contains(associate)
-                                        && associate != null) {
+                                    System.out.println("    BUSINESS: " + account.getIban() + ", " + user.getEmail());
+                                    System.out.println("    Plan: " + user.getPlan());
+                                    System.out.println("    Balance: " + account.getBalance());
+                                    double converted = exchangeRates.exchange("RON", account.getCurrency(),
+                                            ((BusinessAccount) account).getSpendingLimit(), new ArrayList<>());
+                                    System.out.println("    Limit: " + converted);
+
                                     ((BusinessAccount) account).withdraw(convertedAmount,
                                             true, associate, input.getTimestamp());
-                                }
+
+                                    System.out.println("    PayOnline: " + convertedAmount + ", "
+                                            + ((BusinessAccount) account).getRoles().get(associate.getEmail())
+                                            + ": " + associate.getEmail());
+                                    System.out.println("    Balance: " + account.getBalance() + "\n");
 
                             } else {
                                 account.withdraw(convertedAmount, true);
+
+                                System.out.println("    Plan: " + user.getPlan());
+                                System.out.println("    Balance: " + account.getBalance());
+                                System.out.println("    PayOnline: " + convertedAmount + " " + account.getCurrency() + ", " + user.getEmail());
+                                System.out.println("    Balance: " + account.getBalance() + "\n");
                             }
 
-                            System.out.println("    PayOnline: " + convertedAmount + " " + account.getCurrency() + ", " + user.getEmail());
-                            System.out.println("    Plan: " + user.getPlan() + "\n");
                             account.applyCashback(commerciant, convertedAmount);
+
 
                             account.addToTransactionLog(TransactionFactory.createTransaction(input, Map.of(
                                     "amount", String.valueOf(convertedAmount),
@@ -94,11 +122,5 @@ public final class PayOnline implements Strategy {
                 }
             }
         }
-
-        // If the card was not found
-        ObjectNode commandOutput = TheNotFoundError
-                .makeOutput(input, engine.getObjectMapper(), "Card not found");
-
-        Output.getInstance().getOutput().add(commandOutput);
     }
 }

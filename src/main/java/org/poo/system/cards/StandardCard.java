@@ -4,8 +4,8 @@ import org.poo.system.accounts.BankAccount;
 
 public final class StandardCard extends Card {
 
-    public StandardCard(final String iban, final String cardNumber) {
-        super(iban, cardNumber);
+    public StandardCard(final String iban, final String cardNumber, final String email) {
+        super(iban, cardNumber, email);
     }
 
     /**

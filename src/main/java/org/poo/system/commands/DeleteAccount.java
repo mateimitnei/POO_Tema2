@@ -17,23 +17,23 @@ public final class DeleteAccount implements Strategy {
         ObjectNode output = engine.getObjectMapper().createObjectNode();
 
         User owner = null;
-        String deleted = "";
+        String result = "";
         for (User user : engine.getUsers()) {
             if (user.getEmail().equals(input.getEmail())) {
-                deleted = user.deleteAccount(input.getAccount());
+                result = user.deleteAccount(input.getAccount());
                 owner = user;
                 break;
             }
         }
 
-        if (deleted.equals("deleted")) {
+        if (result.equals("deleted")) {
             output.put("success", "Account deleted");
         } else {
             output.put("error",
                     "Account couldn't be deleted - see org.poo.transactions for details");
         }
 
-        if (deleted.equals("has money")) {
+        if (result.equals("has money")) {
             try {
                 for (BankAccount account : owner.getAccounts()) {
                     if (account.getIban().equals(input.getAccount())) {

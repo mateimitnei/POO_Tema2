@@ -26,6 +26,13 @@ public class ChangeSpendingLimit implements Strategy {
 
                     if (user == owner) {
                         ((BusinessAccount) account).setSpendingLimit(input.getAmount());
+                    } else {
+                        // If the user is not the owner of the account
+                        ObjectNode commandOutput = TheNotFoundError
+                                .makeOutput(input, engine.getObjectMapper(),
+                                        "You must be owner in order to change spending limit.");
+
+                        Output.getInstance().getOutput().add(commandOutput);
                     }
 
                     return;

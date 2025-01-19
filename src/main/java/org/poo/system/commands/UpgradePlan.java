@@ -78,7 +78,7 @@ public final class UpgradePlan implements Strategy {
                         try {
                             user.setPlan(input.getNewPlanType());
                             account.withdraw(converted, false);
-                            user.setSpendingThreshold(0.0);
+                            // user.setSpendingThreshold(0.0);
 
                             account.addToTransactionLog(TransactionFactory.createTransaction(input,
                                     Map.of("plan", input.getNewPlanType())));

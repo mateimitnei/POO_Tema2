@@ -22,7 +22,8 @@ public final class SplitPayment implements Strategy {
         List<Double> amounts;
 
         if (input.getSplitPaymentType().equals("equal")) {
-            amounts = Collections.nCopies(input.getAccounts().size(), input.getAmount());
+            amounts = Collections.nCopies(input.getAccounts().size(),
+                    input.getAmount() / input.getAccounts().size());
         } else {
             amounts = new ArrayList<>(input.getAmountForUsers());
         }

@@ -43,11 +43,6 @@ public final class Report implements Strategy {
                 if (transaction.getTimestamp() >= input.getStartTimestamp()
                         && transaction.getTimestamp() <= input.getEndTimestamp()) {
 
-                    if (accountFound.getAccountType().equals("savings")
-                            && !transaction.hasInterest()) {
-                        continue;
-                    }
-
                     transactionsArray.add(
                             transaction.mappedTransaction(engine.getObjectMapper())
                     );
