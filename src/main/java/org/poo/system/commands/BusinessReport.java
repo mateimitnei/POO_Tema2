@@ -10,7 +10,7 @@ import org.poo.system.accounts.BankAccount;
 import org.poo.system.accounts.BusinessAccount;
 import org.poo.system.transactions.Transaction;
 
-public class BusinessReport implements Strategy {
+public final class BusinessReport implements Strategy {
     @Override
     public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
@@ -25,6 +25,12 @@ public class BusinessReport implements Strategy {
 
                         if (input.getType().equals("transaction")) {
                             output = ((BusinessAccount) account).mappedTransactionReport(
+                                    engine.getObjectMapper(),
+                                    input.getStartTimestamp(),
+                                    input.getEndTimestamp()
+                            );
+                        } else if (input.getType().equals("commerciant")) {
+                            output = ((BusinessAccount) account).mappedCommerciantReport(
                                     engine.getObjectMapper(),
                                     input.getStartTimestamp(),
                                     input.getEndTimestamp()

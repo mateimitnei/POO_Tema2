@@ -8,6 +8,14 @@ public final class TheNotFoundError {
 
     private TheNotFoundError() { }
 
+    /**
+     * Creates a JSON object for a "description" output.
+     *
+     * @param input the input of the command
+     * @param objectMapper the object mapper
+     * @param description the description of the output
+     * @return the JSON object with the output of the command
+     */
     public static ObjectNode makeOutput(final CommandInput input, final ObjectMapper objectMapper,
                                  final String description) {
 

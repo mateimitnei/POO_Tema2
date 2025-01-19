@@ -3,7 +3,7 @@ package org.poo.system.transactions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class WithdrewSavings extends Transaction {
+public final class WithdrewSavings extends Transaction {
     private final double amount;
     private final String savingsIBAN;
     private final String classicIBAN;

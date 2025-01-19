@@ -42,7 +42,12 @@ public final class WithdrawSavings implements Strategy {
                                     return;
                                 }
                                 try {
-                                    account.withdraw(convertedAmount, false);
+                                    if (account.getBalance() >= convertedAmount) {
+                                        account.setBalance(account.getBalance() - convertedAmount);
+                                    } else {
+                                        throw new ArithmeticException("Insufficient funds");
+                                    }
+
                                     receiver.deposit(input.getAmount());
 
                                     account.addToTransactionLog(

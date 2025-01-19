@@ -6,12 +6,10 @@ import org.poo.system.*;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.splitPayment.AllPayments;
 import org.poo.system.splitPayment.Payment;
-import org.poo.system.transactions.TransactionFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public final class SplitPayment implements Strategy {
     @Override

@@ -77,28 +77,11 @@ public final class PayOnline implements Strategy {
                                     && ((BusinessAccount) account).getAssociates().contains(associate)
                                     && associate != null) {
 
-                                    System.out.println("    BUSINESS: " + account.getIban() + ", " + user.getEmail());
-                                    System.out.println("    Plan: " + user.getPlan());
-                                    System.out.println("    Balance: " + account.getBalance());
-                                    double converted = exchangeRates.exchange("RON", account.getCurrency(),
-                                            ((BusinessAccount) account).getSpendingLimit(), new ArrayList<>());
-                                    System.out.println("    Limit: " + converted);
-
                                     ((BusinessAccount) account).withdraw(convertedAmount,
                                             true, associate, input.getTimestamp());
 
-                                    System.out.println("    PayOnline: " + convertedAmount + ", "
-                                            + ((BusinessAccount) account).getRoles().get(associate.getEmail())
-                                            + ": " + associate.getEmail());
-                                    System.out.println("    Balance: " + account.getBalance() + "\n");
-
                             } else {
                                 account.withdraw(convertedAmount, true);
-
-                                System.out.println("    Plan: " + user.getPlan());
-                                System.out.println("    Balance: " + account.getBalance());
-                                System.out.println("    PayOnline: " + convertedAmount + " " + account.getCurrency() + ", " + user.getEmail());
-                                System.out.println("    Balance: " + account.getBalance() + "\n");
                             }
 
                             account.applyCashback(commerciant, convertedAmount);

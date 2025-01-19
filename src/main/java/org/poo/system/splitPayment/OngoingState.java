@@ -2,13 +2,9 @@ package org.poo.system.splitPayment;
 
 import org.poo.system.User;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 public final class OngoingState extends State {
 
-    public OngoingState(Payment payment) {
+    public OngoingState(final Payment payment) {
         super(payment);
     }
 
@@ -23,7 +19,7 @@ public final class OngoingState extends State {
     }
 
     @Override
-    public void acceptedBy(User user) {
+    public void acceptedBy(final User user) {
         payment.getUsers().remove(user);
 
         if (payment.getUsers().isEmpty()) {

@@ -40,7 +40,12 @@ public final class Payment {
         state = new OngoingState(this);
     }
 
-    public void changeState(State state) {
+    /**
+     * Changes the state of the payment.
+     *
+     * @param state the new state of the payment
+     */
+    public void changeState(final State state) {
         this.state = state;
     }
 
@@ -52,11 +57,14 @@ public final class Payment {
         state.process();
     }
 
-    public void acceptedBy(User user) {
+    public void acceptedBy(final User user) {
         state.acceptedBy(user);
     }
 
-    public void rejectedBy(User user) {
+    /**
+     * Rejects the payment so the state changes.
+     */
+    public void rejected() {
         state = new RejectedState(this);
     }
 }

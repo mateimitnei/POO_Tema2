@@ -66,12 +66,6 @@ public final class User {
         return "error";
     }
 
-    public void setSpendingThreshold(final double amount) {
-        for (BankAccount account : accounts) {
-            // account.setTotalSpendings(amount);
-        }
-    }
-
     /**
      * Maps the user to a JSON object.
      * @param objectMapper the object mapper

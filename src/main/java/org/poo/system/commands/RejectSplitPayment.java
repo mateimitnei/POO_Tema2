@@ -18,7 +18,7 @@ public final class RejectSplitPayment implements Strategy {
         for (Payment payment : payments.getPayments()) {
             for (User user : payment.getUsers()) {
                 if (user.getEmail().equals(input.getEmail())) {
-                    payment.rejectedBy(user);
+                    payment.rejected();
                     payment.process();
                     return;
                 }

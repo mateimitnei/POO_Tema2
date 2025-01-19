@@ -15,6 +15,10 @@ public final class ExchangeCurrency {
         this.exchangeRates = new ArrayList<>();
     }
 
+    /**
+     * Singleton pattern.
+     * @return the instance of the class
+     */
     public static ExchangeCurrency getInstance() {
         if (instance == null) {
             instance = new ExchangeCurrency();
@@ -22,6 +26,10 @@ public final class ExchangeCurrency {
         return instance;
     }
 
+    /**
+     * Initialize the exchange rates.
+     * @param exchangeRates the exchange rates
+     */
     public void init(final ExchangeInput[] exchangeRates) {
         this.exchangeRates.clear();
 
@@ -34,6 +42,14 @@ public final class ExchangeCurrency {
         }
     }
 
+    /**
+     * Exchange an amount of money from a currency to another.
+     * @param from the currency to exchange from
+     * @param to the currency to exchange to
+     * @param amount the amount to exchange
+     * @param visited the list of visited currencies
+     * @return the exchanged amount
+     */
     public double exchange(final String from, final String to, final double amount,
                                     final List<String> visited) {
         if (from.equals(to)) {

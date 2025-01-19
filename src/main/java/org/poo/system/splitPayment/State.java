@@ -9,7 +9,19 @@ public abstract class State {
         this.payment = payment;
     }
 
+    /**
+     * @return true if the payment is done, false otherwise
+     */
     abstract boolean isDone();
+
+    /**
+     * Process the payment
+     */
     abstract void process();
+
+    /**
+     * Register a user that accepted the payment
+     * @param user the user that accepted the payment
+     */
     abstract void acceptedBy(User user);
 }

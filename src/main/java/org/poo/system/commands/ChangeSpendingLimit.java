@@ -9,10 +9,10 @@ import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.accounts.BusinessAccount;
 
-public class ChangeSpendingLimit implements Strategy {
+public final class ChangeSpendingLimit implements Strategy {
 
     @Override
-    public void execute(CommandInput input) {
+    public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
 
         for (User user : engine.getUsers()) {

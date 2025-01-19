@@ -32,8 +32,6 @@ public final class CreateCard implements Strategy {
 
                     account.addToTransactionLog(TransactionFactory.createTransaction(input,
                             Map.of("cardNumber", cardNumber)));
-
-                    System.out.println("    CARD CREATED by " + input.getEmail() + " for " + account.getIban() + "\n");
                     return;
                 }
             }

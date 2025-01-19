@@ -73,7 +73,8 @@ public abstract class BankAccount {
         } else if (commerciantsMap.get(commerciant.getName()).equals("spendingThreshold")) {
             ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
             double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
-            totalSpendings.put(commerciant, totalSpendings.getOrDefault(commerciant, 0.0) + amountInLei);
+            totalSpendings.put(commerciant,
+                    totalSpendings.getOrDefault(commerciant, 0.0) + amountInLei);
         }
     }
 
@@ -89,22 +90,9 @@ public abstract class BankAccount {
 
         if (cashBackRate > 0.0) {
             deposit(amount * cashBackRate);
-
-            System.out.println("    Cashback: " + cashBackRate + " % of " + amount
-                    + " = " + amount * cashBackRate);
-            System.out.println("    Balance: " + balance + "\n");
         }
 
         madeTransaction(commerciant, amount);
-    }
-
-    /**
-     * Adds a transaction to be printed at "printTransactions" or "report".
-     *
-     * @param transaction the transaction to be added
-     */
-    public void addToTransactionLog(final Transaction transaction) {
-        transactionsLog.add(transaction);
     }
 
     /**
@@ -140,14 +128,21 @@ public abstract class BankAccount {
 
         // Check if the account is eligible for the silver to gold plan upgrade
         if (isPayment) {
-            ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
-            double amountInLei = exchanger.exchange(currency, "RON", amountCpy, new ArrayList<>());
-            if (amountInLei >= PAYMENT_THRESHOLD && owner.getPlan().equals("silver")) {
-                owner.setPaymentCounter(owner.getPaymentCounter() + 1);
-                if (owner.getPaymentCounter() >= 5) {
-                    owner.setPlan("gold");
-                    // owner.setSpendingThreshold(amountInLei);
-                }
+            checkGoldCompatibility(amount);
+        }
+    }
+
+    /**
+     * Checks if the account is eligible for the silver to gold plan upgrade.
+     * @param amount the amount of the transaction
+     */
+    public void checkGoldCompatibility(final double amount) {
+        ExchangeCurrency exchanger = ExchangeCurrency.getInstance();
+        double amountInLei = exchanger.exchange(currency, "RON", amount, new ArrayList<>());
+        if (amountInLei >= PAYMENT_THRESHOLD && owner.getPlan().equals("silver")) {
+            owner.setPaymentCounter(owner.getPaymentCounter() + 1);
+            if (owner.getPaymentCounter() >= 5) {
+                owner.setPlan("gold");
             }
         }
     }
@@ -164,6 +159,15 @@ public abstract class BankAccount {
             amountCpy += SILVER_FEE * amountCpy;
         }
         return amountCpy;
+    }
+
+    /**
+     * Adds a transaction to be printed at "printTransactions" or "report".
+     *
+     * @param transaction the transaction to be added
+     */
+    public void addToTransactionLog(final Transaction transaction) {
+        transactionsLog.add(transaction);
     }
 
     /**

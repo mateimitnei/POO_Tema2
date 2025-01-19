@@ -84,8 +84,6 @@ public final class SendMoney implements Strategy {
                     "amount", String.valueOf(convertedAmount)
             )));
 
-            // System.out.println("SendMoney:");
-
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
             senderAccount.addToTransactionLog(new Transaction(input.getTimestamp(),
                     "Insufficient funds"));
@@ -106,7 +104,6 @@ public final class SendMoney implements Strategy {
             )));
 
             senderAccount.applyCashback(commerciant, input.getAmount());
-            System.out.println("Send money to commerciant \n");
 
         } catch (ArithmeticException e) { // Exception from senderAccount.withdraw()
             senderAccount.addToTransactionLog(new Transaction(input.getTimestamp(),

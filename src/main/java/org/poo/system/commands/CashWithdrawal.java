@@ -38,15 +38,6 @@ public final class CashWithdrawal implements Strategy {
                                         .createTransaction(input, Map.of(
                                                 "amount", String.valueOf(input.getAmount()))));
 
-                                // card.madePayment(account, user.getEmail(), input.getTimestamp());
-
-                                System.out.println("    Cash withdrawal: "
-                                        + converted + " " + account.getCurrency());
-                                System.out.println("    Balance: "
-                                        + account.getBalance() + " " + account.getCurrency());
-                                System.out.println("    Timestamp: "
-                                        + input.getTimestamp() + "\n");
-
                             } catch (ArithmeticException e) {
                                 account.addToTransactionLog(new Transaction(input.getTimestamp(),
                                         "Insufficient funds"));

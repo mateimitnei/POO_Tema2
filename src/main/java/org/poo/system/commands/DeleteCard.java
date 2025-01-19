@@ -20,10 +20,15 @@ public final class DeleteCard implements Strategy {
                 for (Card card : account.getCards()) {
                     if (card.getCardNumber().equals(input.getCardNumber())) {
 
-                        if (account.getAccountType().equals("business") &&
-                            (!((BusinessAccount) account).getRoles().containsKey(input.getEmail()) ||
-                            (((BusinessAccount) account).getRoles().get(input.getEmail()).equals("employee") &&
-                            !card.getCreator().equals(input.getEmail())))) {
+                        if (account.getAccountType().equals("business")
+
+                                && (!((BusinessAccount) account).getRoles()
+                                .containsKey(input.getEmail())
+
+                                || (((BusinessAccount) account).getRoles()
+                                .get(input.getEmail()).equals("employee")
+                                && !card.getCreator().equals(input.getEmail())))) {
+
                                 return;
                             }
 

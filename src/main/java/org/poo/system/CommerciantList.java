@@ -37,7 +37,7 @@ public final class CommerciantList {
      *
      * @param inputCommerciants the commerciants to be initialized
      */
-    public void init(CommerciantInput[] inputCommerciants) {
+    public void init(final CommerciantInput[] inputCommerciants) {
 
         commerciants.clear();
         map.clear();

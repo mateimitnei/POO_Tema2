@@ -10,7 +10,7 @@ import java.util.Map;
 
 public final class FinalisedState extends State {
 
-    public FinalisedState(Payment payment) {
+    public FinalisedState(final Payment payment) {
         super(payment);
     }
 
@@ -29,8 +29,8 @@ public final class FinalisedState extends State {
             double convertedAmount = exchangeRates.exchange(payment.getCurrency(),
                     account.getCurrency(), payment.getAmounts().get(account), new ArrayList<>());
 
-            double amountWithFee = account.applyFee(convertedAmount);
-            if (account.getBalance() < amountWithFee) {
+            // double amountWithFee = account.applyFee(convertedAmount);
+            if (account.getBalance() < convertedAmount) {
                 errorAccount = account.getIban();
                 break;
             }
@@ -44,9 +44,13 @@ public final class FinalisedState extends State {
 
             } else {
                 double convertedAmount = exchangeRates.exchange(payment.getCurrency(),
-                        account.getCurrency(), payment.getAmounts().get(account), new ArrayList<>());
+                        account.getCurrency(), payment.getAmounts().get(account),
+                        new ArrayList<>());
 
-                account.withdraw(convertedAmount, true);
+                // account.withdraw(convertedAmount, true);
+                account.setBalance(account.getBalance() - convertedAmount);
+                account.checkGoldCompatibility(convertedAmount);
+
                 account.addToTransactionLog(TransactionFactory.createTransaction(payment.getInput(),
                         Map.of("errorIBAN", "", "rejected", "")));
             }
@@ -58,7 +62,7 @@ public final class FinalisedState extends State {
     }
 
     @Override
-    public void acceptedBy(User user) {
+    public void acceptedBy(final User user) {
         // Do nothing
     }
 }

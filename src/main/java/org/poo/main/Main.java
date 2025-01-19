@@ -76,8 +76,6 @@ public final class Main {
         Output finalOutput = Output.getInstance();
         finalOutput.setOutput(objectMapper.createArrayNode());
 
-        System.out.println("\n" + filePath1 + "\n");
-
         Engine bankEngine = Engine.getInstance();
         bankEngine.init(inputData);
         bankEngine.execute();

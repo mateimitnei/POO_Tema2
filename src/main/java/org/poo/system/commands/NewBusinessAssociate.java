@@ -9,12 +9,10 @@ import org.poo.system.User;
 import org.poo.system.accounts.BankAccount;
 import org.poo.system.accounts.BusinessAccount;
 
-import java.util.Map;
-
-public class NewBusinessAssociate implements Strategy {
+public final class NewBusinessAssociate implements Strategy {
 
     @Override
-    public void execute(CommandInput input) {
+    public void execute(final CommandInput input) {
         Engine engine = Engine.getInstance();
 
         User associate = engine.getUsers().stream()

@@ -8,7 +8,7 @@ import java.util.Map;
 
 public final class RejectedState extends State {
 
-    public RejectedState(Payment payment) {
+    public RejectedState(final Payment payment) {
         super(payment);
     }
 
@@ -29,7 +29,7 @@ public final class RejectedState extends State {
     }
 
     @Override
-    public void acceptedBy(User user) {
+    public void acceptedBy(final User user) {
         // Do nothing
     }
 }
